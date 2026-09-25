@@ -62,3 +62,8 @@ See docs/VALIDATION.md for exact commands and output. T08 was explicitly approve
 
 ## Public demo
 - [x] T14: Clickable GitHub Pages demo. Verified synthetic-only artifact, three selectable investigations, matching report downloads, desktop/mobile Chrome checks, privacy guards, 124 tests OK, and successful live deployment. See docs/PAGES.md and docs/PROGRESS.md.
+
+## Guided toolkit
+- [ ] T15: Category navigation, tool panels, four real Windows read-only checks, synthetic public equivalents, button documentation and screenshot evidence. Local implementation verified with 140 tests OK and five browser regression checks; deployment verification pending.
+
+Follow-up tools remain planned: DNS/HTTPS target probes, certificates, packet imports, per-process resource ranking, and optional local chat. T15 does not claim those capabilities are implemented.

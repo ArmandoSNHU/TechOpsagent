@@ -1,11 +1,11 @@
 # TechOpsagent
 **Support operations lab · Armando Gomez**
 
-**[Open the interactive demo](https://armandosnhu.github.io/TechOpsagent/)** — three synthetic incidents, evidence trails, and downloadable draft RCA reports. Works on desktop and phone; no installation or sign-in. [Demo build and deployment guide](docs/PAGES.md).
+**[Open the interactive demo](https://armandosnhu.github.io/TechOpsagent/)** — a category-based diagnostic toolkit, synthetic readings, and incident investigations. Works on desktop and phone; no installation or sign-in. [Demo build and deployment guide](docs/PAGES.md).
 
 A local incident-investigation workspace that turns controlled local failures and imported structured observations into evidence trails, troubleshooting steps, and downloadable incident reports.
 
-![Desktop investigation workspace](docs/screenshots/fastapi-desktop.jpg)
+![Diagnostic toolkit overview](docs/screenshots/toolkit-overview.jpg)
 
 ## Start on Windows
 Requires Python 3.12+ and PowerShell. From the cloned repository:
@@ -14,11 +14,13 @@ Requires Python 3.12+ and PowerShell. From the cloned repository:
 .\setup.ps1 -Install -Check -Test -EnableHook
 .\setup.ps1 -Run
 ```
-Open **http://127.0.0.1:8765**. Select a synthetic incident, inspect its evidence, and download the draft report. Ctrl+C stops the foreground app. No account, API key, or model is needed for this workflow.
+Open **http://127.0.0.1:8765**. Choose Network or Computer health to run an on-demand Windows check. Applications opens the existing incident workspace. The [button guide](docs/TOOL-GUIDE.md) explains each control, reading, and limitation. Ctrl+C stops the foreground app. No account, API key, or model is needed for this workflow.
 
 Use `.\setup.ps1 -Check -Live` in a second terminal to detect unhealthy services and stale previews. Configure private accounts with `-Configure -Service github` or `servicenow`. The full [setup guide](setup.md) covers optional Grafana/Loki installation, startup checks, local credentials, and port conflicts.
 
 ## What works today
+- Category dashboard with guided symptom shortcuts and an illustrated [button guide](docs/TOOL-GUIDE.md).
+- Four on-demand Windows checks: network configuration, TCP connections, resource readings, and selected services. Results stay in tab memory unless explicitly exported.
 - FastAPI/Uvicorn backend with strict request models and generated OpenAPI.
 - Three evidence modes: **Live local lab**, **Saved fixtures**, and **Imported JSONL logs**.
 - Real loopback HTTP checks against disposable controlled 500/504/401 endpoints, a healthy endpoint, and local name-resolution observations.

@@ -6,7 +6,7 @@ MAX_BODY = 16384
 HEADERS = {
     'x-content-type-options': 'nosniff',
     'cache-control': 'no-store',
-    'content-security-policy': "default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'",
+    'content-security-policy': "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; frame-ancestors 'none'; base-uri 'none'",
 }
 
 class LocalOnlyMiddleware:

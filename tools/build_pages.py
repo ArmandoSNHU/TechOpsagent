@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 
 from techops.engine import SCENARIOS, render_report
+from techops.tool_catalog import CATALOG, DEMO
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -17,7 +18,14 @@ def build(output):
         source = ROOT / 'site' / name
         if source.is_symlink():
             raise ValueError('Site sources must be regular files')
+        shutil.copyfile(source, output / ('incidents.html' if name == 'index.html' else name))
+    for name in ('index.html', 'toolkit.css', 'toolkit.js'):
+        source = ROOT / 'techops' / 'static' / 'toolkit' / name
+        if source.is_symlink():
+            raise ValueError('Toolkit sources must be regular files')
         shutil.copyfile(source, output / name)
+    for name, value in (('catalog.json', CATALOG), ('demo.json', DEMO)):
+        (output / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     (output / '.nojekyll').touch()
     (output / 'scenarios.json').write_text(
         json.dumps(SCENARIOS, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

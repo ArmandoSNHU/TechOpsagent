@@ -10,6 +10,37 @@ from techops.store import Store
 from techops.engine import investigate
 
 class ApiTests(unittest.TestCase):
+    def test_toolkit_catalog_and_explicit_assets(self):
+        status, _, body = self.request('GET', '/api/tools/catalog')
+        self.assertEqual(status, 200)
+        self.assertEqual(len(json.loads(body)['categories']), 5)
+        for route in ['/toolkit.js', '/toolkit.css', '/incidents']:
+            self.assertEqual(self.request('GET', route)[0], 200)
+        self.assertIn('data-mode="local"', self.request('GET', '/')[2].decode())
+
+    def test_toolkit_run_uses_fixed_tool_and_keeps_readings_private(self):
+        from unittest.mock import patch
+        with patch('techops.toolkit_routes.collect', return_value={'tool': 'network', 'mode': 'local', 'readings': []}) as run:
+            status, headers, body = self.request('POST', '/api/tools/run', '{"tool":"network"}', {'Content-Type': 'application/json'})
+            self.assertEqual(status, 200)
+            run.assert_called_once_with('network')
+            self.assertIn('no-store', headers['cache-control'])
+
+    def test_toolkit_rejects_unimplemented_and_injected_tools(self):
+        from unittest.mock import patch
+        with patch('techops.toolkit_routes.collect') as run:
+            for body in [{'tool': 'dns'}, {'tool': 'network;whoami'}, {'tool': 'network', 'command': 'anything'}]:
+                self.assertEqual(self.request('POST', '/api/tools/run', json.dumps(body), {'Content-Type': 'application/json'})[0], 400)
+            run.assert_not_called()
+
+    def test_toolkit_busy_does_not_start_second_collector(self):
+        from unittest.mock import patch
+        with patch('techops.toolkit_routes._collection_lock') as lock, patch('techops.toolkit_routes.collect') as run:
+            lock.acquire.return_value = False
+            self.assertEqual(self.request('POST', '/api/tools/run', '{"tool":"network"}', {'Content-Type': 'application/json'})[0], 409)
+            run.assert_not_called()
+            lock.release.assert_not_called()
+
     @classmethod
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()

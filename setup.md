@@ -102,3 +102,6 @@ Actual counts are in [STATE.md](STATE.md) and [validation](docs/VALIDATION.md). 
 - Direct phone access remains separate work; use the existing authenticated remote session. Never expose these unauthenticated localhost services publicly.
 
 Offline AI preview remains available via `.\.venv\Scripts\python.exe -m techops.ai --dry-run --scenario api_error`. Setup never downloads or starts models. See [model evaluation](docs/MODEL-EVALUATION.md).
+
+## Diagnostic toolkit
+The home dashboard now opens category-based tools. See [the illustrated button guide](docs/TOOL-GUIDE.md). Four read-only collectors support Windows; other platforms report Unavailable. No additional dependency or model is needed. Incident workflows remain at `/incidents`. Results stay in tab memory until explicitly downloaded; exports may include local network details.

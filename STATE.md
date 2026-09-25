@@ -78,13 +78,20 @@ User authorized the clickable Pages demo. Published https://armandosnhu.github.i
 
 Local suite: `Ran 124 tests in 4.846s`, `OK`; four new tests cover artifact allowlisting, fixture/report consistency, reproducibility, and refusal to merge old output. Public Chrome checks passed all three cases/report URLs, desktop and 390px mobile; no console errors/warnings. Actual public screenshots and an element snippet are in docs/screenshots/pages-*. No secrets or customer data are in the artifact. Source/history publication guards passed with zero findings. See docs/PAGES.md for rebuild/deployment instructions.
 
+## 2026-09-25 — T15 toolkit locally verified, publishing
+User approved category navigation and tool panels. Home now exposes five categories, four symptom shortcuts, and four read-only Windows collectors: adapter configuration, TCP connections, resource readings, selected services. Existing incidents moved to /incidents. Tool explanations are deterministic; results live in tab memory with explicit JSON export. Planned tools and missing observations are labeled truthfully. Public artifact contains 13 allowlisted synthetic files; no actual collection enters it. No model started or downloaded.
+
+Latest suite: `Ran 140 tests in 8.297s`, `OK`. Five saved browser regression checks passed after fixing history refresh during in-flight navigation; local console clean. Real Windows collectors returned usable rows for all four tools, including a labeled 200-row truncated connection snapshot. Chrome local network view showed timestamped readings. Desktop/mobile synthetic UI and four screenshots/snippet verified. See docs/TOOL-GUIDE.md, docs/TOOLKIT-PLAN.md and docs/VALIDATION.md. Publication verification pending.
+
 ## Restart Point
+
 Final documentation verification: `Ran 124 tests in 8.078s`, `OK`; staged/history scans reported zero findings. Public requests for private configuration, incident database, and backend source paths returned 404. Real live screenshots were reviewed before publication.
 
-1. Read Git status and reproduce 124 tests using `.\.venv\Scripts\python.exe -m unittest discover -s tests`.
+1. Read Git status and reproduce 140 tests using `.\.venv\Scripts\python.exe -m unittest discover -s tests`.
 2. Local Grafana http://127.0.0.1:3000/d/techops-local-lab and Loki http://127.0.0.1:3100/ready were verified. Check live health before reuse. Run tools.seed_loki --send-local for fresh synthetic events. See docs/INTEGRATIONS.md for install/start commands and hidden local credentials.
 3. ServiceNow adapter/draft implementation is done; live validation is blocked on the developer-instance URL and credentials entered only in local .env. Do not paste secrets into chat or tracked docs. T11 authenticated direct phone access remains outstanding.
 4. Preferred setup: setup.ps1 -Check, -Configure -Service name, -StartLab, -Test, and foreground -Run. Use -Check -Live to identify stale previews. Older 8765/8766/8767 processes may serve old code; verify identity before manual shutdown. A fresh server test verifies build_id. No new persistent preview was launched during setup improvement.
 5. User granted full permissions/no routine prompts; no-model-download restriction persists. No model downloads or remote incident writes occurred.
 6. Run tools.publish_guard --staged and --history before every push. Keep .env, downloaded binaries, generated runtime configs, databases and logs excluded. Track only synthetic examples/screenshots and blank .env.example.
 7. T14 is complete. Public demo: https://armandosnhu.github.io/TechOpsagent/. Build via tools.build_pages to a new output folder; never upload the repository root. Pages auto-deploys main after tests and privacy checks. This demo is separate from T11 authenticated local-app access.
+8. T15 local implementation verified; finish public deployment verification. Toolkit local preview uses 8772; generated synthetic preview uses 8773. Check current process/build identities before reuse. Diagnostic JSON exports can contain private details and must never be committed. Scope of the first network tool is configuration only, not connectivity testing.

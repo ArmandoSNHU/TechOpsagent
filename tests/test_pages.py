@@ -9,12 +9,22 @@ from techops.engine import SCENARIOS
 
 
 class PagesTests(unittest.TestCase):
+    def test_demo_never_collects_local_readings(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory, patch('techops.toolkit.collect', side_effect=AssertionError('Private collector called')):
+            output = Path(directory) / 'public'
+            build(output)
+            self.assertIn('data-mode="demo"', (output / 'index.html').read_text(encoding='utf-8'))
+            fixtures = json.loads((output / 'demo.json').read_text(encoding='utf-8'))
+            self.assertEqual(set(fixtures), {'network', 'connections', 'health', 'services'})
+            self.assertTrue(all(item['mode'] == 'demo' for item in fixtures.values()))
+
     def test_only_allowlisted_files_are_published(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / 'public'
             build(output)
             self.assertEqual({p.name for p in output.iterdir()},
-                             {'index.html', 'style.css', 'app.js', 'scenarios.json', '.nojekyll', 'reports'})
+                             {'index.html', 'incidents.html', 'toolkit.css', 'toolkit.js', 'catalog.json', 'demo.json', 'style.css', 'app.js', 'scenarios.json', '.nojekyll', 'reports'})
             self.assertEqual(len(list((output / 'reports').glob('*.md'))), 3)
 
     def test_fixture_reports_are_consistent_and_synthetic(self):

@@ -17,9 +17,12 @@ from techops.lab import collect
 from techops.ai import LocalModelAdapter
 from techops.integration_routes import integration_router
 from techops.runtime import build_id
+from techops.toolkit_routes import router as toolkit_router
 
 ROOT = Path(__file__).resolve().parent
 ROUTES = ('GET /api/health', 'GET /api/scenarios', 'GET /api/incidents', 'GET /api/incidents/{id}', 'GET /api/incidents/{id}/report', 'POST /api/investigate', 'GET /openapi.json', 'POST /api/lab/investigate', 'POST /api/analyze', 'GET /api/incidents/{id}/ai-preview', 'GET /api/integrations', 'POST /api/integrations/github/read', 'GET /api/integrations/github/preview', 'GET /api/integrations/grafana/health', 'POST /api/integrations/loki/analyze', 'POST /api/integrations/servicenow/read', 'GET /api/incidents/{incident_id}/servicenow-preview')
+
+ROUTES += ('GET /api/tools/catalog', 'POST /api/tools/run')
 
 class InvestigationRequest(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
@@ -39,6 +42,7 @@ def create_app(database=None, settings=None):
                   docs_url=None, redoc_url=None)
     app.add_middleware(LocalOnlyMiddleware)
     app.include_router(integration_router(store, settings))
+    app.include_router(toolkit_router)
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request, exc):
@@ -103,7 +107,18 @@ def create_app(database=None, settings=None):
         return result
 
     @app.get('/',include_in_schema=False)
-    def index(): return FileResponse(ROOT/'static'/'index.html',media_type='text/html')
+    def index():
+        html = (ROOT/'static'/'toolkit'/'index.html').read_text(encoding='utf-8')
+        return Response(html.replace('data-mode="demo"', 'data-mode="local"'), media_type='text/html')
+
+    @app.get('/incidents', include_in_schema=False)
+    def incident_workspace(): return FileResponse(ROOT/'static'/'index.html', media_type='text/html')
+
+    @app.get('/toolkit.js', include_in_schema=False)
+    def toolkit_js(): return FileResponse(ROOT/'static'/'toolkit'/'toolkit.js', media_type='text/javascript')
+
+    @app.get('/toolkit.css', include_in_schema=False)
+    def toolkit_css(): return FileResponse(ROOT/'static'/'toolkit'/'toolkit.css', media_type='text/css')
 
     @app.get('/app.js',include_in_schema=False)
     def javascript(): return FileResponse(ROOT/'static'/'app.js',media_type='text/javascript')

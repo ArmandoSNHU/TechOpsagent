@@ -19,3 +19,7 @@ Tests cover API routes and generated schema, strict inputs, body limits includin
 
 ## Remaining integrations
 Further model startup or downloads remain subject to the recorded user authorization and project approval rules. GitHub Issues, Grafana/Loki, ServiceNow, and authenticated remote phone access remain separate checklist deliverables. No automatic remediation is implemented.
+## 2026-09-25 toolkit extension
+The home route now serves category-based diagnostic navigation. `/incidents` preserves the original investigation workspace. `tool_catalog.py` defines public descriptions and explicit synthetic examples. `toolkit.py` runs fixed, bounded Windows read-only commands; `toolkit_routes.py` validates an enum and serializes collection with a nonblocking lock. The UI receives results only on demand and keeps up to 50 snapshots in tab memory; no diagnostic data is written to SQLite. Reports are explicit JSON downloads. Unsupported systems, failures, and empty results remain distinguishable from usable observations.
+
+Shared toolkit HTML/CSS/JS live under `techops/static/toolkit/`. Server-rendered HTML explicitly selects local mode; the Pages builder always copies demo-mode HTML with allowlisted synthetic JSON. It does not derive mode from the hostname or fall back to demo readings after local failures. The original public incident demo is published as `incidents.html`. See TOOLKIT-PLAN.md and TOOL-GUIDE.md for accepted scope and controls.

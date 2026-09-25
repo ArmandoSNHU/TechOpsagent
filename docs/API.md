@@ -5,6 +5,8 @@ Base URL: `http://127.0.0.1:8765`. JSON uses UTF-8. Bind address is loopback onl
 
 | Route | Result |
 |---|---|
+| GET /api/tools/catalog | 200: public categories, descriptions and availability |
+| POST /api/tools/run | 200: on-demand local Windows snapshot; 409: another check is running |
 | GET /api/integrations | 200: configuration status, no credentials |
 | GET /api/integrations/github/preview | 200: offline GET preview |
 | POST /api/integrations/github/read | 200: read-only ticket page; optional page integer |
@@ -20,6 +22,11 @@ Base URL: `http://127.0.0.1:8765`. JSON uses UTF-8. Bind address is loopback onl
 | POST /api/investigate | 201: newly persisted fixture investigation |
 | POST /api/lab/investigate | 201: observed loopback fault investigation |
 | POST /api/analyze | 201: structured JSONL analysis |
+
+## Run a diagnostic tool
+Send JSON `{"tool":"network"}` to `POST /api/tools/run`. The only accepted IDs are `network`, `connections`, `health`, and `services`; extra fields and other IDs return 400. Fixed read-only Windows commands run without a shell or profile, with a 12-second deadline and no elevation. Results include `tool`, `mode: local`, UTC `collected_at`, `status`, `summary`, `readings`, and `truncated`. Status is `observed`, `issue`, `not_checked`, or `unavailable`. Unsupported systems and collection failures are unavailable, never healthy. Raw command errors are not returned. At most 200 sanitized rows are exposed; oversized output is rejected. Results are not saved to SQLite. Local Host/Origin restrictions and no-store headers apply. Only one collection runs at a time.
+
+`GET /` opens the toolkit. `GET /incidents` preserves the incident workspace. Explicit `/toolkit.js` and `/toolkit.css` routes serve shared assets. The static public build always uses synthetic fixtures; it never calls these collection APIs.
 
 ## Create an investigation
 ```powershell

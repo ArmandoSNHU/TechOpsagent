@@ -56,3 +56,13 @@ The [public demo](https://armandosnhu.github.io/TechOpsagent/) runs entirely fro
 ![Published demo mobile](screenshots/pages-mobile.jpg)
 
 ![Draft diagnosis snippet](screenshots/pages-snippet.png)
+## Category-based diagnostic toolkit — 2026-09-25
+Actual Chrome captures from the generated public artifact served locally. All visible readings are synthetic; real Windows validation retained only status/count summaries for documentation. Full button walkthrough: [TOOL-GUIDE.md](TOOL-GUIDE.md).
+
+![Toolkit home](screenshots/toolkit-overview.jpg)
+
+![Network tool](screenshots/toolkit-network.jpg)
+
+![Network result snippet](screenshots/toolkit-snippet.png)
+
+![Mobile tool panel](screenshots/toolkit-mobile.jpg)
