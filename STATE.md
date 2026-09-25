@@ -44,9 +44,12 @@ Inspected the 61 Git-eligible files, including six screenshots and image metadat
 ## 2026-09-24 - initial publication preparation
 User supplied the public repository URL following the privacy review and prior full-permissions instruction. Connected origin to ArmandoSNHU/TechOpsagent; remote was empty. Re-ran suite: `Ran 77 tests in 1.580s`, `OK`; pip check: `No broken requirements found.` Repository-local author email uses GitHub no-reply to avoid publishing the personal email from global Git configuration. Preparing the reviewed prototype for initial publication; T10/T11 remain future work.
 
+## 2026-09-24 - initial prototype published
+Initial commit 5f2053b successfully pushed to origin/main. Staged privacy review covered 61 files with zero blocked findings. GitHub no-reply commit email used. Documentation and screenshots are published; this is a source prototype publication, not a hosted service or tagged release.
+
 ## Restart Point
-1. Inspect Git status and reproduce 77 tests with `.\.venv\Scripts\python.exe -m unittest discover -s tests`. Initial publication is being prepared; inspect Git status and remote before continuing.
-2. T01-T09 checked. Next: optional T10 ServiceNow dry-run payload. No instance configured. T11 authenticated direct phone access and T12 release remain outstanding.
-3. Repository: https://github.com/ArmandoSNHU/TechOpsagent. No push performed. See docs/INTEGRATIONS.md. Grafana/Loki require service URLs for live verification.
+1. Inspect Git status and reproduce 77 tests with `.\.venv\Scripts\python.exe -m unittest discover -s tests`. Initial prototype published; inspect Git status and remote before continuing.
+2. T01-T09 checked. Next: optional T10 ServiceNow dry-run payload. No instance configured. T11 authenticated direct phone access remains outstanding. T12 initial source publication is complete; no tagged release created.
+3. Repository: https://github.com/ArmandoSNHU/TechOpsagent. Initial prototype pushed to main. See docs/INTEGRATIONS.md. Grafana/Loki require service URLs for live verification.
 4. User granted full permissions and requested no routine prompts. Explicit no-model-download restriction persists. Installed local-model testing/runtime startup approved. Read docs/MODEL-EVALUATION.md before further inference.
 5. Preview 8766 was browser-verified; check health before reuse. Secrets, databases, raw logs remain excluded from Git.
