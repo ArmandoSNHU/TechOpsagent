@@ -28,6 +28,7 @@ jobs:
       - run: python -m unittest discover -s tests
       - run: node --check site/app.js
       - run: node --check techops/static/toolkit/toolkit.js
+      - run: node --test tests/theme.test.cjs
       - run: python -m tools.build_pages
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4

@@ -1,6 +1,20 @@
 'use strict';
 (() => {
   const $ = id => document.getElementById(id);
+  const themeSelect = $('theme-select');
+  function applyTheme(value) {
+    const theme = value === 'neon' ? 'neon' : 'light';
+    document.documentElement.dataset.theme = theme;
+    themeSelect.value = theme;
+    return theme;
+  }
+  let savedTheme = 'light';
+  try { savedTheme = localStorage.getItem('techops-theme'); } catch { /* Storage may be disabled. */ }
+  applyTheme(savedTheme);
+  themeSelect.addEventListener('change', () => {
+    const theme = applyTheme(themeSelect.value);
+    try { localStorage.setItem('techops-theme', theme); } catch { /* The current tab still switches. */ }
+  });
   const local = document.body.dataset.mode === 'local';
   let catalog, fixtures, currentCategory, currentTool, currentResult, busy = false, activeView = 'overview';
   const history = [];

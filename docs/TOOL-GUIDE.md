@@ -6,6 +6,15 @@ Open the [public demo](https://armandosnhu.github.io/TechOpsagent/) to explore s
 
 ![Toolkit overview with category buttons](screenshots/toolkit-overview.jpg)
 
+## Light and Neon Night
+Use **Theme** in the toolkit top bar to choose **Light** or **Neon Night**. Neon Night uses dark navy surfaces with mint and lime accents. Both themes cover overview cards, category directories, tool readings, explanations and session history. The separate legacy incident workspace retains its existing appearance.
+
+The browser saves only `techops-theme` (`light` or `neon`) in localStorage. Diagnostic results remain in tab memory; changing themes does not save or upload readings. Preferences are separate for the public demo and each local origin. If browser storage is blocked, switching still works for the current page. Light is the default.
+
+![Neon Night desktop](screenshots/neon-desktop.jpg)
+
+![Neon Night phone layout](screenshots/neon-mobile.jpg)
+
 ## Navigation
 | Button | Opens | How to use it |
 |---|---|---|

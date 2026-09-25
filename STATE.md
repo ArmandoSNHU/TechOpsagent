@@ -84,6 +84,8 @@ User approved category navigation and tool panels. Home now exposes five categor
 Latest suite: `Ran 140 tests in 8.297s`, `OK`. Five saved browser regression checks passed after fixing history refresh during in-flight navigation; local console clean. Real Windows collectors returned usable rows for all four tools, including a labeled 200-row truncated connection snapshot. Chrome local network view showed timestamped readings. Desktop/mobile synthetic UI and four screenshots/snippet verified. See docs/TOOL-GUIDE.md, docs/TOOLKIT-PLAN.md and docs/VALIDATION.md. Pages deployment 36099471457 and privacy/test run 36099471459 succeeded for 03677a9. Public desktop/mobile tool flows, JSON export, history and original incident links verified. Fresh local source fingerprint matched; all four API checks returned HTTP 200 with observed readings.
 
 ## Restart Point
+2026-09-25 — T16 implemented and locally verified. Shared toolkit now has a Light/Neon Night selector, theme-only localStorage, and safe fallback when storage is blocked. 140 Python tests OK (`Ran 140 tests in 8.255s`); 4 theme tests passed. Desktop/mobile Chrome checks, preference restoration, contrast samples, and synthetic screenshots verified. Public deployment pending. Run `node --test tests/theme.test.cjs` alongside the Python suite for future verification.
+
 
 Final documentation verification: `Ran 124 tests in 8.078s`, `OK`; staged/history scans reported zero findings. Public requests for private configuration, incident database, and backend source paths returned 404. Real live screenshots were reviewed before publication.
 

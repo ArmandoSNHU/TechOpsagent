@@ -66,3 +66,8 @@ Actual Chrome captures from the generated public artifact served locally. All vi
 ![Network result snippet](screenshots/toolkit-snippet.png)
 
 ![Mobile tool panel](screenshots/toolkit-mobile.jpg)
+
+## Neon Night — 2026-09-25
+Real Chrome capture of the synthetic dashboard with the new Theme selector. See TOOL-GUIDE.md for mobile capture and storage behavior.
+
+![Neon Night](screenshots/neon-desktop.jpg)
