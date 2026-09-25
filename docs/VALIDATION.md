@@ -121,3 +121,5 @@ After final source restart, local health build_id matched current source. All fo
 Four theme behavior tests first failed, then passed with `node --test tests/theme.test.cjs`: 4 tests, 4 pass, 0 fail. Coverage: saved preference, invalid preference fallback, switching both ways, blocked storage. Full Python suite: `Ran 140 tests in 8.255s`, `OK`. Both CI workflows now run the theme tests.
 
 Chrome verified desktop overview, category navigation, health readings, explanations, saved theme restoration after reload, and returning to Light. Mobile content/viewport measured 390/390. Console warnings/errors: none. Sampled Neon Night contrast ratios: primary button 13.81:1, review badge 8.23:1, guide paragraph 7.65:1, timestamp 8.33:1, active navigation 10.25:1. This is a targeted contrast check, not a complete accessibility audit. Screenshots contain only the synthetic public artifact: neon-desktop.jpg and neon-mobile.jpg.
+
+Neon Night live verification: source 339a225, Pages run 36101611164 and privacy/test run 36101611276 succeeded. Public selector switched to neon, persisted after reload, and rendered at mobile width 390/390 without console warnings/errors.
