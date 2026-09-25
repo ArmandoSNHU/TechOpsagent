@@ -71,3 +71,12 @@ Actual Chrome captures from the generated public artifact served locally. All vi
 Real Chrome capture of the synthetic dashboard with the new Theme selector. See TOOL-GUIDE.md for mobile capture and storage behavior.
 
 ![Neon Night](screenshots/neon-desktop.jpg)
+
+## DNS resolution — 2026-09-25
+Actual Chrome captures of the generated synthetic Pages artifact served locally: desktop success, a focused result snippet and mobile failure. No real local addresses or private hostnames were captured. The [button guide](TOOL-GUIDE.md#test-dns-resolution) explains every control and field.
+
+![DNS desktop](screenshots/dns-desktop.jpg)
+
+![DNS result snippet](screenshots/dns-snippet.png)
+
+![DNS mobile failure](screenshots/dns-mobile.jpg)

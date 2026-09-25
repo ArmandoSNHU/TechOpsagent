@@ -72,7 +72,7 @@
     show('category-view', item.title);
   }
   function refreshHistory() {
-    $('history-list').replaceChildren(...(history.length ? history.slice().reverse().map((entry, index) => button(`${catalog.tools[entry.tool].title} · ${label[entry.status]} · #${history.length-index}`, 'history-item', () => { openTool(entry.tool); render(entry); })) : [element('p', 'No checks run in this session yet.', 'muted')]));
+    $('history-list').replaceChildren(...(history.length ? history.slice().reverse().map((entry, index) => button(`${catalog.tools[entry.tool].title}${entry.hostname ? ' · '+entry.hostname : ''} · ${label[entry.status]} · #${history.length-index}`, 'history-item', () => { openTool(entry.tool); render(entry); })) : [element('p', 'No checks run in this session yet.', 'muted')]));
   }
   function openTool(id) {
     currentTool = id;
@@ -82,6 +82,9 @@
     $('tool-title').textContent = tool.title;
     $('tool-description').textContent = tool.description;
     $('tool-limit').textContent = tool.limit;
+    $('dns-inputs').hidden = id !== 'dns';
+    $('hostname-field').hidden = !local;
+    $('dns-demo-field').hidden = local;
     $('tool-help').textContent = tool.help;
     $('next-tool').textContent = catalog.tools[tool.next].title + ' →';
     $('run-tool').textContent = local ? 'Run local check ↗' : 'Run demo check ↗';
@@ -102,7 +105,12 @@
     $('result-state').className = 'state ' + result.status;
     $('result-time').textContent = `${result.mode === 'demo' ? 'SYNTHETIC EXAMPLE' : 'LOCAL SNAPSHOT'} · ${result.collected_at}`;
     $('result-summary').textContent = result.summary;
+    $('result-target').hidden = !result.hostname;
+    $('result-target').textContent = result.hostname ? `Query: ${result.hostname}${result.elapsed_ms == null ? '' : ' · Query time: '+result.elapsed_ms+' ms (excludes process startup)'}` : '';
+    if (result.hostname && local) $('hostname').value = result.hostname;
+    if (result.tool === 'dns' && !local) $('dns-example').value = result.status === 'issue' ? 'dns_failure' : 'dns';
     $('truncated').hidden = !result.truncated;
+    $('truncated').textContent = `Only the first ${result.tool === 'dns' ? 64 : 200} readings are shown. This is not a complete inventory.`;
     $('readings').replaceChildren();
     if (result.readings.length) {
       const table = element('table');
@@ -125,20 +133,32 @@
   async function run() {
     if (busy) return;
     const tool = currentTool;
+    const request = {tool};
+    const example = $('dns-example').value;
+    if (tool === 'dns' && local) {
+      const raw = $('hostname').value;
+      const hostname = raw.trim().toLowerCase().replace(/\.$/, '');
+      if (/[\x00-\x1f]/.test(raw) || !hostname || hostname.length > 253 || !/[a-z]/.test(hostname) || hostname.split('.').some(part => !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(part))) {
+        $('run-status').textContent = 'Enter an ASCII hostname such as example.com, without a URL, IP address, port, or path.';
+        $('hostname').focus();
+        return;
+      }
+      request.hostname = hostname;
+    }
     busy = true;
     $('run-tool').disabled = true;
     $('result-panel').hidden = true;
     $('explanation').hidden = true;
     $('result-empty').hidden = false;
     currentResult = null;
-    $('run-status').textContent = local ? 'Reading local Windows information… up to 12 seconds.' : 'Loading the synthetic example…';
+    $('run-status').textContent = local ? tool === 'dns' ? 'Running the requested DNS lookup… up to 12 seconds.' : 'Reading local Windows information… up to 12 seconds.' : 'Loading the synthetic example…';
     try {
       let result;
       if (local) {
-        const response = await fetch('./api/tools/run', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tool}), signal:AbortSignal.timeout(16000)});
+        const response = await fetch('./api/tools/run', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(request), signal:AbortSignal.timeout(16000)});
         if (!response.ok) throw new Error(response.status === 409 ? 'Another check is running. Try again shortly.' : 'The local check could not complete. Verify the backend is running, then retry.');
         result = await response.json();
-      } else result = structuredClone(fixtures[tool]);
+      } else result = structuredClone(fixtures[tool === 'dns' ? example : tool]);
       if (!result || result.tool !== tool || !Array.isArray(result.readings)) throw new Error('Unexpected result. No readings can be displayed.');
       history.push(result);
       if (history.length > 50) history.shift();
@@ -160,6 +180,9 @@
   $('category-back').addEventListener('click', home);
   $('tool-back').addEventListener('click', () => category(currentCategory));
   $('run-tool').addEventListener('click', run);
+  $('hostname').addEventListener('keydown', event => {
+    if (event.key === 'Enter' && currentTool === 'dns') { event.preventDefault(); run(); }
+  });
   $('next-tool').addEventListener('click', () => openTool(catalog.tools[currentTool].next));
   $('explain').addEventListener('click', () => {
     if (!currentResult) return;
@@ -180,6 +203,7 @@
       const response = await fetch(local ? './api/tools/catalog' : './catalog.json', {credentials:'omit'});
       if (!response.ok) throw new Error('Catalog unavailable');
       catalog = await response.json();
+      $('available-count').replaceChildren(document.createTextNode(String(Object.values(catalog.tools).filter(t => t.availability === 'ready').length).padStart(2,'0')+' '), element('small','read-only tools'));
       if (!local) {
         const demoResponse = await fetch('./demo.json', {credentials:'omit'});
         if (!demoResponse.ok) throw new Error('Examples unavailable');

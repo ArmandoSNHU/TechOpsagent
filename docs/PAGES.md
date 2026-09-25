@@ -47,4 +47,4 @@ Repository Settings → Pages uses **GitHub Actions**. A push to `main` or manua
 
 The workflow publishes only `data/pages`, never the repository root. Do not change the artifact path to `.`. Generated artifacts are Git-ignored. Maintain the synthetic-only fixture contract and visually inspect screenshots before committing them.
 
-After deployment, check all four tools, explanations, session history, JSON exports, the three incident cases, browser console, and mobile width at the public address. Relative asset/report URLs preserve the `/TechOpsagent/` prefix. If fixtures fail to load, the page displays an unavailable state and leaves investigation disabled.
+After deployment, check all five tools, explanations, session history, JSON exports, the three incident cases, browser console, and mobile width at the public address. Relative asset/report URLs preserve the `/TechOpsagent/` prefix. If fixtures fail to load, the page displays an unavailable state and leaves investigation disabled.

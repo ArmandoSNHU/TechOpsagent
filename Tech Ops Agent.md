@@ -66,6 +66,8 @@ See docs/VALIDATION.md for exact commands and output. T08 was explicitly approve
 ## Guided toolkit
 - [x] T15: Category navigation, tool panels, four real Windows read-only checks, synthetic public equivalents, button documentation and screenshot evidence. Verified with 140 tests OK, five browser regression checks, real Windows readings, and successful public deployment.
 
-Follow-up tools remain planned: DNS/HTTPS target probes, certificates, packet imports, per-process resource ranking, and optional local chat. T15 does not claim those capabilities are implemented.
+Follow-up tools remain planned: HTTPS target probes, certificates, packet imports, per-process resource ranking, and optional local chat. T15 does not claim those capabilities are implemented.
 
 - [x] T16: Light/Neon Night theme selector, persistent theme-only preference, readable result states, mobile layout, blocked-storage fallback, screenshots and documentation. Verified 140 Python tests and 4 theme tests.
+
+- [x] T17: DNS hostname lookup with validated stdin input, bounded A/AAAA/alias readings, truthful errors, fixed public examples, target-preserving reports/history, button guide and screenshots. Verified 152 Python tests, 4 theme tests, five local browser checks and demo history regression. Publication status: see STATE.md.

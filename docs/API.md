@@ -24,7 +24,7 @@ Base URL: `http://127.0.0.1:8765`. JSON uses UTF-8. Bind address is loopback onl
 | POST /api/analyze | 201: structured JSONL analysis |
 
 ## Run a diagnostic tool
-Send JSON `{"tool":"network"}` to `POST /api/tools/run`. The only accepted IDs are `network`, `connections`, `health`, and `services`; extra fields and other IDs return 400. Fixed read-only Windows commands run without a shell or profile, with a 12-second deadline and no elevation. Results include `tool`, `mode: local`, UTC `collected_at`, `status`, `summary`, `readings`, and `truncated`. Status is `observed`, `issue`, `not_checked`, or `unavailable`. Unsupported systems and collection failures are unavailable, never healthy. Raw command errors are not returned. At most 200 sanitized rows are exposed; oversized output is rejected. Results are not saved to SQLite. Local Host/Origin restrictions and no-store headers apply. Only one collection runs at a time.
+Send JSON `{"tool":"network"}` to `POST /api/tools/run`. The only accepted IDs are `network`, `connections`, `health`, `services`, and `dns`; extra fields and other IDs return 400. Fixed read-only Windows commands run without a shell or profile, with a 12-second deadline and no elevation. Results include `tool`, `mode: local`, UTC `collected_at`, `status`, `summary`, `readings`, and `truncated`. Status is `observed`, `issue`, `not_checked`, or `unavailable`. Unsupported systems and collection failures are unavailable, never healthy. Raw command errors are not returned. At most 200 sanitized rows are exposed; oversized output is rejected. Results are not saved to SQLite. Local Host/Origin restrictions and no-store headers apply. Only one collection runs at a time.
 
 `GET /` opens the toolkit. `GET /incidents` preserves the incident workspace. Explicit `/toolkit.js` and `/toolkit.css` routes serve shared assets. The static public build always uses synthetic fixtures; it never calls these collection APIs.
 
@@ -57,3 +57,10 @@ Integration routes return 409 for a missing configured service, 502 for sanitize
 - GET /api/incidents/{incident_id}/servicenow-preview: offline draft payload for a saved investigation; 404 if missing. Never sends a remote write.
 
 Health includes build_id, a public-source fingerprint captured at app startup. Local diagnostics compare it with current source to detect stale previews. It excludes .env and runtime data; restart after configuration changes even if build_id is unchanged.
+
+## DNS request and response
+Send `{"tool":"dns","hostname":"example.com"}` to the existing `POST /api/tools/run` route. DNS requires an ASCII hostname (punycode accepted), up to 253 normalized characters, with valid labels. Case and a trailing dot are normalized. URLs, IP addresses, ports, paths, control characters and custom DNS-server fields are rejected with 400. Other tools reject a hostname field.
+
+The fixed Windows Resolve-DnsName script receives JSON through stdin; input never becomes executable command text. DNS-only A/AAAA lookup uses configured Windows DNS and may use cached records; hosts-file lookup is disabled. Running it can disclose the queried name to the configured resolver. It does not fetch a website or scan ports.
+
+DNS adds `hostname` and nullable `elapsed_ms`, and returns at most 64 validated `name`, `type`, `answer`, `ttl_seconds` rows. Types are A, AAAA and returned CNAME aliases. Elapsed query time excludes process startup and is not network round-trip latency. Address records give observed; failed lookup gives issue; no usable address gives not_checked; timeout or malformed collection gives unavailable. A failed lookup alone cannot distinguish a nonexistent name from an unreachable resolver. A successful lookup does not prove application health.

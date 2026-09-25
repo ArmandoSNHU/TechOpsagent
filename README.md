@@ -20,7 +20,7 @@ Use `.\setup.ps1 -Check -Live` in a second terminal to detect unhealthy services
 
 ## What works today
 - Category dashboard with guided symptom shortcuts and an illustrated [button guide](docs/TOOL-GUIDE.md).
-- Four on-demand Windows checks: network configuration, TCP connections, resource readings, and selected services. Results stay in tab memory unless explicitly exported.
+- Five on-demand Windows checks: network configuration, DNS resolution, TCP connections, resource readings, and selected services. Results stay in tab memory unless explicitly exported.
 - FastAPI/Uvicorn backend with strict request models and generated OpenAPI.
 - Three evidence modes: **Live local lab**, **Saved fixtures**, and **Imported JSONL logs**.
 - Real loopback HTTP checks against disposable controlled 500/504/401 endpoints, a healthy endpoint, and local name-resolution observations.

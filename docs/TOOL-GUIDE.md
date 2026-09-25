@@ -22,7 +22,7 @@ The browser saves only `techops-theme` (`light` or `neon`) in localStorage. Diag
 | Network | Adapter/connection tools and planned network tools | Open Check my network for your first snapshot |
 | Computer health | Resource readings and selected services | Start with Check computer health for a slow computer |
 | Applications | Incident workspace links and planned tools | Investigate an incident for evidence and an RCA; local log import lives there |
-| Troubleshoot a problem | Four available starting tools | Choose the check relevant to your symptom |
+| Troubleshoot a problem | Available starting tools | Choose the check relevant to your symptom |
 | Reports & history | Current-tab results plus saved incident investigations | Reopen a result or visit the separate incident workspace |
 | All categories / Overview | Home dashboard | Return to the category menu |
 | Back to category | The tool directory you came from | Choose another tool in that category |
@@ -52,7 +52,7 @@ All local collectors use fixed PowerShell commands without profile loading or us
 
 ## Result labels
 - **Observed:** usable measurements were returned; this is not an overall health certificate.
-- **Review needed:** a resource threshold was crossed; repeat the measurement and investigate context.
+- **Review needed:** a resource threshold was crossed or a DNS lookup failed; investigate the reported context.
 - **Not checked:** no usable readings were returned. It is not a pass.
 - **Unavailable:** unsupported OS, permissions, missing Windows component, timeout, or collection error. No successful result is invented.
 
@@ -61,10 +61,10 @@ Connection/configuration tools deliberately avoid Passed because they do not pro
 ## History and privacy
 The latest 50 diagnostic snapshots stay only in the current tab's memory. Refreshing closes that session history. **Saved investigations** opens the separate SQLite-backed incident history in the local app. The public incident demo has no persistent incident history.
 
-Local diagnostic exports can contain private IP addresses, DNS configuration, adapter/process names, and resource readings. Review them before sharing. They are not automatically redacted, stored in SQLite, committed, or uploaded. Never place real reports in tracked project files or public screenshots. Public documentation screenshots use only synthetic examples and documentation-range IP addresses.
+Local diagnostic exports can contain queried hostnames, returned addresses, private IP addresses, DNS configuration, adapter/process names, and resource readings. Review them before sharing. They are not automatically redacted, stored in SQLite, committed, or uploaded. Never place real reports in tracked project files or public screenshots. Public documentation screenshots use only synthetic examples and documentation-range IP addresses.
 
 ## Planned tools
-DNS resolution, website/server probes, API checks, certificate inspection, packet capture imports, and per-process resource rankings are labeled **Planned**. They have no Run button. Optional local-model chat remains future work; no model is downloaded or started by this release.
+Website/server probes, API checks, certificate inspection, packet capture imports, and per-process resource rankings are labeled **Planned**. They have no Run button. Optional local-model chat remains future work; no model is downloaded or started by this release.
 
 ## If something does not work
 - Toolkit cannot load: confirm the server is running and reload. Do not open HTML directly with `file://`.
@@ -75,3 +75,20 @@ DNS resolution, website/server probes, API checks, certificate inspection, packe
 - Download opens instead of saving: use your browser's save/download action. Files are JSON; no executable scripts are included.
 
 ![Mobile network tool](screenshots/toolkit-mobile.jpg)
+
+## Test DNS resolution
+1. Open **Network → Test DNS resolution → Open tool**.
+2. In the local Windows app, enter a hostname such as `example.com`. Use a name, without `https://`, a port, path or IP address. ASCII and punycode names are accepted.
+3. Choose **Run local check**. The requested name is sent through configured Windows DNS; a cached answer may be used. The operation changes no settings, bypasses the hosts file, and has a 12-second deadline.
+4. Read **Query**, status and the record table. **A** is an IPv4 address; **AAAA** is IPv6; **CNAME** is a returned alias; **TTL seconds** is the reported record lifetime. At most 64 records appear. Query time excludes process startup and is not a ping measurement.
+5. Choose **Explain results**, **Save report**, or **Check my network** to examine adapter/DNS configuration. History and exports retain the name actually queried, even if you later edit the input.
+
+On public Pages, choose **Address records returned** or **Lookup failed**, then **Run demo check**. These are fixed synthetic cases; the page sends no DNS query. Reopening history restores the matching example.
+
+An observed address proves only that resolution returned an address. It does not prove a website, VPN or application works. Lookup failure can reflect spelling, a missing name, resolver reachability or policy; the tool does not establish which cause applies. No usable address is Not checked, while collection errors/timeouts are Unavailable. Local DNS queries may reveal the name to your configured resolver. Reports are not automatically redacted.
+
+![DNS success example in Neon Night](screenshots/dns-desktop.jpg)
+
+![DNS result snippet](screenshots/dns-snippet.png)
+
+![DNS failure example on mobile](screenshots/dns-mobile.jpg)

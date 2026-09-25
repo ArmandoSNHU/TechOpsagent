@@ -10,6 +10,20 @@ from techops.store import Store
 from techops.engine import investigate
 
 class ApiTests(unittest.TestCase):
+    def test_dns_validated_target_is_passed_as_data(self):
+        from unittest.mock import patch
+        with patch('techops.toolkit_routes.collect_dns', return_value={'tool':'dns','hostname':'example.com','readings':[]}) as run:
+            status, _, body = self.request('POST','/api/tools/run',json.dumps({'tool':'dns','hostname':'Example.COM.'}),{'Content-Type':'application/json'})
+            self.assertEqual(status,200)
+            run.assert_called_once_with('example.com')
+
+    def test_dns_rejects_missing_or_unsafe_targets(self):
+        from unittest.mock import patch
+        with patch('techops.toolkit_routes.collect_dns') as run:
+            for value in [{'tool':'dns'}, {'tool':'dns','hostname':'https://example.com'}, {'tool':'dns','hostname':'example.com;whoami'}, {'tool':'dns','hostname':42}, {'tool':'network','hostname':'example.com'}, {'tool':'dns','hostname':'example.com','server':'192.0.2.53'}]:
+                self.assertEqual(self.request('POST','/api/tools/run',json.dumps(value),{'Content-Type':'application/json'})[0],400)
+            run.assert_not_called()
+
     def test_toolkit_catalog_and_explicit_assets(self):
         status, _, body = self.request('GET', '/api/tools/catalog')
         self.assertEqual(status, 200)

@@ -16,7 +16,7 @@ class PagesTests(unittest.TestCase):
             build(output)
             self.assertIn('data-mode="demo"', (output / 'index.html').read_text(encoding='utf-8'))
             fixtures = json.loads((output / 'demo.json').read_text(encoding='utf-8'))
-            self.assertEqual(set(fixtures), {'network', 'connections', 'health', 'services'})
+            self.assertEqual(set(fixtures), {'network', 'connections', 'health', 'services', 'dns', 'dns_failure'})
             self.assertTrue(all(item['mode'] == 'demo' for item in fixtures.values()))
 
     def test_only_allowlisted_files_are_published(self):

@@ -33,3 +33,4 @@
 [data-theme="neon"] .skip{color:#12251b}
 [data-theme="neon"] :focus-visible{outline-color:#bdfc7b}
 @media(max-width:700px){.topbar{flex-wrap:wrap}.topbar-controls{width:100%;justify-content:space-between;gap:10px}.theme-control{font-size:9px}.theme-control select{font-size:11px}.topbar-controls .mode-badge{max-width:none}}
+.dns-inputs{margin-bottom:22px}.dns-inputs label{display:block;font-size:13px;font-weight:600;margin-bottom:8px}.dns-inputs input,.dns-inputs select{width:100%;max-width:440px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:12px;font:14px var(--sans)}.dns-inputs p{font-size:11px;color:var(--muted);max-width:480px;margin:9px 0 0}.result-target{font:12px/1.7 var(--mono);overflow-wrap:anywhere;padding:12px;background:var(--paper);border:1px solid var(--line);border-radius:3px}

@@ -123,3 +123,10 @@ Four theme behavior tests first failed, then passed with `node --test tests/them
 Chrome verified desktop overview, category navigation, health readings, explanations, saved theme restoration after reload, and returning to Light. Mobile content/viewport measured 390/390. Console warnings/errors: none. Sampled Neon Night contrast ratios: primary button 13.81:1, review badge 8.23:1, guide paragraph 7.65:1, timestamp 8.33:1, active navigation 10.25:1. This is a targeted contrast check, not a complete accessibility audit. Screenshots contain only the synthetic public artifact: neon-desktop.jpg and neon-mobile.jpg.
 
 Neon Night live verification: source 339a225, Pages run 36101611164 and privacy/test run 36101611276 succeeded. Public selector switched to neon, persisted after reload, and rendered at mobile width 390/390 without console warnings/errors.
+
+## 2026-09-25 — DNS resolution
+Observed failing collector/API tests before implementation; numeric-address validation also failed before its type check was added. Final full suite: `Ran 152 tests in 8.374s`, `OK`. Node theme suite: 4 tests, 4 pass, 0 fail. Tests cover hostname/command separation, malformed records, bounded output, failure/empty results, timeouts, unsupported OS and strict API fields.
+
+Live Windows lookups: example.com returned observed with 4 rows (126 ms); a reserved .invalid name returned issue with 0 rows (102 ms). Only counts/status/timing are recorded here. A freshly restarted local server also returned four address rows through the browser. Five mocked local browser checks passed using tests/browser_dns.js: invalid input, normalization, in-flight target editing, JSON export identity, and history restoration.
+
+Independent review found no material security blocker and identified demo history/selector mismatch; corrected and verified with tests/browser_dns_demo.js. Desktop 1440px and mobile 390px had no page overflow, both themes switched, synthetic success/failure rendered correctly, and the console had no warnings/errors. Reviewed screenshots contain only synthetic fixtures. DNS query success is not an application-health test. No model download/startup occurred.
