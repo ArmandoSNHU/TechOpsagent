@@ -45,3 +45,6 @@ The lab endpoint accepts the same scenario/ticket payload as fixture investigati
 Observed analysis records additionally include `certainty` and `hypotheses` (cause, scenario, rule score, evidence_ids). Evidence includes IDs, optional observation timestamps, and measured latency. The default P3 on observed records is a provisional triage label; assess actual impact manually. The legacy health `mode: simulated` denotes the controlled demo environment; per-record `environment` distinguishes simulated, local_fault_lab, and imported_logs.
 
 Integration routes return 409 for a missing configured service, 502 for sanitized upstream failures, and 404 for an empty Loki window. Remote targets come only from local .env settings or the process environment. GitHub reads one page of up to 20 items and excludes pull requests. Tokens remain server-side and are never returned.
+
+- POST /api/integrations/servicenow/read: read one bounded page of active incidents; 409 if instance/auth missing.
+- GET /api/incidents/{incident_id}/servicenow-preview: offline draft payload for a saved investigation; 404 if missing. Never sends a remote write.

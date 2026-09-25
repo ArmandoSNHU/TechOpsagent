@@ -6,10 +6,11 @@ import time
 from techops.connectors.github import GitHubIssues
 from techops.connectors.observability import Grafana,Loki
 from techops.connectors.http import ConnectorError
+from techops.connectors.servicenow import ServiceNow
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('service',choices=['github','grafana','loki'])
+    parser.add_argument('service',choices=['github','grafana','loki','servicenow'])
     parser.add_argument('--repository')
     parser.add_argument('--url')
     parser.add_argument('--label',default='checkout')
@@ -23,6 +24,9 @@ def main():
         elif args.service=='grafana':
             adapter=Grafana(args.url or settings['GRAFANA_URL'],token=settings.get('GRAFANA_TOKEN'))
             result=adapter.health() if args.read else adapter.preview()
+        elif args.service=='servicenow':
+            adapter=ServiceNow(args.url or settings['SERVICENOW_URL'],token=settings['SERVICENOW_TOKEN'],username=settings['SERVICENOW_USERNAME'],password=settings['SERVICENOW_PASSWORD'])
+            result=adapter.list_incidents() if args.read else adapter.preview()
         else:
             adapter=Loki(args.url or settings['LOKI_URL'],token=settings.get('LOKI_TOKEN'));end=int(time.time())
             result=adapter.query(args.label,end-900,end) if args.read else adapter.preview(args.label,end-900,end)

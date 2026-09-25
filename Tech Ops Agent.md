@@ -35,7 +35,7 @@ These are separate deliverables, not claims of completed functionality.
 - [x] T07: Disabled-by-default local-model adapter, capability probe, and prompt dry run. Acceptance: offline tests prove no runtime starts or model downloads occur and evidence identifiers are preserved.
 - [x] T08: Approved local-model execution and evaluation. Requires explicit model/runtime approval. Acceptance: measured results on scenario fixtures, with unsupported claims flagged.
 - [x] T09: GitHub Issues intake and Grafana/Loki adapters. Acceptance: fixture tests pass before authorized live connections; remote writes stay preview-only until approved.
-- [ ] T10: Optional ServiceNow developer-instance adapter. Acceptance: dry-run incident payload is reviewed before authorized remote writes.
+- [x] T10: ServiceNow adapter with bounded read-only intake and offline incident payload preview. Verified with fixtures and local draft review; live developer-instance connection remains pending instance URL and local credentials. Remote writes are not implemented.
 - [ ] T11: Authenticated phone access. Acceptance: unauthorized clients are rejected and no unauthenticated public endpoint is exposed.
 - [x] T12: GitHub release. Requires repository URL and publication authorization. Acceptance: tests pass, secrets/runtime data are excluded, documentation and screenshots match shipped behavior.
 
@@ -55,4 +55,4 @@ Windows/PowerShell, Armando Gomez attribution, local-first execution, no unappro
 | T08 | 60 tests OK; six live cases passed format/citation checks; one unsupported suggestion flagged |
 | T09 | 77 tests OK; live GitHub CLI and browser read returned zero issues; Grafana/Loki fixture-tested |
 
-See docs/VALIDATION.md for exact commands and output. T08 was explicitly approved and evaluated with no model downloads. See docs/MODEL-EVALUATION.md for timings, memory, rejected attempts, and unsupported-output findings. T10-T11 remain unchecked. T12 initial source publication is complete; no tagged release created. Grafana/Loki are fixture-tested and remain unconfigured.
+See docs/VALIDATION.md for exact commands and output. T08 was explicitly approved and evaluated with no model downloads. See docs/MODEL-EVALUATION.md for timings, memory, rejected attempts, and unsupported-output findings. T11 remains unchecked. T10 live instance validation remains pending. T12 initial source publication is complete; no tagged release created. Grafana/Loki are fixture-tested and remain unconfigured.

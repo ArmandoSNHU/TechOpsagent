@@ -18,7 +18,7 @@ from techops.ai import LocalModelAdapter
 from techops.integration_routes import integration_router
 
 ROOT = Path(__file__).resolve().parent
-ROUTES = ('GET /api/health', 'GET /api/scenarios', 'GET /api/incidents', 'GET /api/incidents/{id}', 'GET /api/incidents/{id}/report', 'POST /api/investigate', 'GET /openapi.json', 'POST /api/lab/investigate', 'POST /api/analyze', 'GET /api/incidents/{id}/ai-preview', 'GET /api/integrations', 'POST /api/integrations/github/read', 'GET /api/integrations/github/preview', 'GET /api/integrations/grafana/health', 'POST /api/integrations/loki/analyze')
+ROUTES = ('GET /api/health', 'GET /api/scenarios', 'GET /api/incidents', 'GET /api/incidents/{id}', 'GET /api/incidents/{id}/report', 'POST /api/investigate', 'GET /openapi.json', 'POST /api/lab/investigate', 'POST /api/analyze', 'GET /api/incidents/{id}/ai-preview', 'GET /api/integrations', 'POST /api/integrations/github/read', 'GET /api/integrations/github/preview', 'GET /api/integrations/grafana/health', 'POST /api/integrations/loki/analyze', 'POST /api/integrations/servicenow/read', 'GET /api/incidents/{incident_id}/servicenow-preview')
 
 class InvestigationRequest(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)

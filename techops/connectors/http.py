@@ -1,6 +1,7 @@
 """Bounded JSON GET transport; no redirects, writes, or credential logging."""
 import http.client
 import json
+import base64
 from urllib.parse import urlsplit
 
 class ConnectorError(RuntimeError):
@@ -9,7 +10,7 @@ class ConnectorError(RuntimeError):
         self.code=code
 
 class JsonReader:
-    def __init__(self, base_url, token=None, timeout=10):
+    def __init__(self, base_url, token=None, timeout=10, basic_auth=None):
         parts=urlsplit(base_url)
         if parts.scheme not in {'https','http'} or not parts.hostname or parts.username or parts.password or parts.query or parts.fragment:
             raise ValueError('Expected an origin URL without embedded credentials or query')
@@ -17,10 +18,14 @@ class JsonReader:
             raise ValueError('Cleartext HTTP is permitted only for loopback services')
         if '..' in parts.path or any(c in base_url for c in '\r\n'): raise ValueError('Invalid base path')
         if token and any(c in token for c in '\r\n'): raise ValueError('Invalid token')
+        if basic_auth is not None:
+            if token or parts.scheme != 'https' or len(basic_auth) != 2 or not all(isinstance(v,str) and v and not any(c in v for c in '\r\n') for v in basic_auth) or ':' in basic_auth[0]:
+                raise ValueError('Basic authentication requires HTTPS and one valid credential pair')
         if not 0 < timeout <= 30: raise ValueError('Invalid timeout')
         self.base_url=base_url.rstrip('/')
         self.parts=parts
         self.token=token
+        self.basic_auth=basic_auth
         self.timeout=timeout
 
     def get(self, path):
@@ -30,6 +35,7 @@ class JsonReader:
         connection=constructor(self.parts.hostname,self.parts.port,timeout=self.timeout)
         headers={'Accept':'application/json','User-Agent':'TechOpsagent/0.3'}
         if self.token: headers['Authorization']='Bearer '+self.token
+        elif self.basic_auth: headers['Authorization']='Basic '+base64.b64encode(':'.join(self.basic_auth).encode()).decode('ascii')
         try:
             connection.request('GET',self.parts.path.rstrip('/')+path,headers=headers)
             response=connection.getresponse()

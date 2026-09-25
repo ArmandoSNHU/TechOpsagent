@@ -7,6 +7,7 @@ from techops.connectors.github import GitHubIssues
 from techops.connectors.observability import Grafana,Loki
 from techops.connectors.http import ConnectorError
 from techops.evidence import analyze
+from techops.connectors.servicenow import ServiceNow,incident_preview
 
 class GitHubRead(BaseModel):
     model_config=ConfigDict(extra='forbid',strict=True)
@@ -20,7 +21,7 @@ class LokiRead(BaseModel):
 def integration_router(store, settings=None):
     router=APIRouter()
     settings=load_settings() if settings is None else settings
-    config={name:settings.get(key, '') for name,key in [('github_repository','GITHUB_REPOSITORY'),('grafana_url','GRAFANA_URL'),('loki_url','LOKI_URL')]}
+    config={name:settings.get(key, '') for name,key in [('github_repository','GITHUB_REPOSITORY'),('grafana_url','GRAFANA_URL'),('loki_url','LOKI_URL'),('servicenow_url','SERVICENOW_URL')]}
     def required(name):
         value=config.get(name)
         if not value: raise HTTPException(409,name+' is not configured')
@@ -34,7 +35,8 @@ def integration_router(store, settings=None):
     def status():
         return {'github':{'configured':bool(config.get('github_repository')),'repository':config.get('github_repository')},
                 'grafana':{'configured':bool(config.get('grafana_url'))},
-                'loki':{'configured':bool(config.get('loki_url'))},'remote_writes':False}
+                'loki':{'configured':bool(config.get('loki_url'))},
+                'servicenow':{'configured':bool(config.get('servicenow_url') and (settings.get('SERVICENOW_TOKEN') or (settings.get('SERVICENOW_USERNAME') and settings.get('SERVICENOW_PASSWORD'))))},'remote_writes':False}
 
     @router.post('/api/integrations/github/read')
     def github_read(body:GitHubRead):
@@ -60,4 +62,16 @@ def integration_router(store, settings=None):
         result.update(title='Loki evidence: '+body.service,service=body.service,source='loki',source_truncated=logs['truncated'])
         store.save(result)
         return result
+    @router.post('/api/integrations/servicenow/read')
+    def servicenow_read(body:GitHubRead):
+        url=required('servicenow_url')
+        if not (settings.get('SERVICENOW_TOKEN') or (settings.get('SERVICENOW_USERNAME') and settings.get('SERVICENOW_PASSWORD'))):
+            raise HTTPException(409,'ServiceNow authentication is not configured')
+        return upstream(lambda:ServiceNow(url,token=settings.get('SERVICENOW_TOKEN'),username=settings.get('SERVICENOW_USERNAME'),password=settings.get('SERVICENOW_PASSWORD')).list_incidents(body.page))
+
+    @router.get('/api/incidents/{incident_id}/servicenow-preview')
+    def servicenow_preview(incident_id:str):
+        record=store.get(incident_id)
+        if record is None:raise HTTPException(404,'Incident not found')
+        return incident_preview(record)
     return router

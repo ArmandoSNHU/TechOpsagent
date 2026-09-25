@@ -49,8 +49,8 @@ class SettingsTests(unittest.TestCase):
         from techops.settings import main
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'.env'
-            with patch('techops.settings.ENV_PATH',p), patch('builtins.input',side_effect=['sample/project','','']), patch('getpass.getpass',return_value='fixture-only') as hidden, patch('sys.stdout',new_callable=io.StringIO) as output:
+            with patch('techops.settings.ENV_PATH',p), patch('builtins.input',side_effect=['sample/project','','','','']), patch('getpass.getpass',return_value='fixture-only') as hidden, patch('sys.stdout',new_callable=io.StringIO) as output:
                 main()
-                self.assertEqual(hidden.call_count,3)
+                self.assertEqual(hidden.call_count,6)
                 self.assertNotIn('fixture-only',output.getvalue())
             self.assertEqual(load_settings(p,{})['GITHUB_TOKEN'],'fixture-only')

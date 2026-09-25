@@ -44,6 +44,14 @@ class ApiTests(unittest.TestCase):
             self.assertEqual(status,200)
             self.assertTrue(json.loads(body)['read_only'])
             read.assert_called_once_with(page=1,per_page=20)
+    def test_servicenow_unconfigured_and_draft_preview(self):
+        self.assertEqual(self.request('POST','/api/integrations/servicenow/read','{}',{'Content-Type':'application/json'})[0],409)
+        status,_,body=self.post({'scenario':'api_error'})
+        record=json.loads(body)
+        status,_,body=self.request('GET','/api/incidents/'+record['id']+'/servicenow-preview')
+        self.assertEqual(status,200);self.assertTrue(json.loads(body)['dry_run'])
+        self.assertFalse(json.loads(body)['remote_write'])
+        self.assertEqual(self.request('GET','/api/incidents/missing/servicenow-preview')[0],404)
     def test_unconfigured_loki_is_explicit(self):
         status,_,body=self.request('POST','/api/integrations/loki/analyze','{"service":"checkout","minutes":15}',{'Content-Type':'application/json'})
         self.assertEqual(status,409)

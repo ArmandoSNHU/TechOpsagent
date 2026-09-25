@@ -55,10 +55,20 @@ Private integration settings now load from ignored .env with process-environment
 
 Verified `Ran 93 tests in 2.357s`, `OK`; pip check clean, JavaScript syntax and documentation links passed. Clean-profile Chrome preview on 8767 showed disabled integrations; screenshot saved. Pre-push checks and CI cover common credential formats, sensitive artifacts, and removed historical files, with documented limitations. Hook enabled locally. The .env is plaintext local storage, protected from Git and HTTP serving; it is not a secrets vault.
 
+## 2026-09-24 - integration wiring working
+User requested live Grafana/Loki and ServiceNow wiring. Starting installed Docker for a loopback-only synthetic observability lab. ServiceNow instance information pending; implement read-only intake and offline draft preview without remote writes.
+
+## 2026-09-24 - observability wired; ServiceNow live connection pending
+Grafana OSS 13.2.2 and Loki 3.7.8 official native Windows archives installed under ignored data/observability after checksum verification. Docker Desktop failed startup with an inference-manager socket error; its installation/settings were not repaired or removed. Local lab launcher provisions localhost-only listeners, Loki source, synthetic dashboard, and a random Grafana admin password only in ignored .env. Anonymous Grafana access is Viewer-only for synthetic local data.
+
+Loki /ready 200, synthetic push 204, live read three observations. Grafana health 200/database ok; datasource and dashboard verified via API and Chrome. Screenshot: docs/screenshots/grafana-loki-snippet.png. Live Loki analysis route handler produced an investigation and ServiceNow preview handler produced a draft without sending. ServiceNow requires user-supplied instance URL and locally entered credentials; no live call or remote write was made.
+
+Full suite: `Ran 104 tests in 2.731s`, `OK`. Pip check clean; JS syntax and doc links passed. ServiceNow supports OAuth bearer or HTTPS basic authentication, fixed incident fields, bounded pages, and draft preview. CLI and dashboard controls added. Automatic approval review blocked new app-preview launch (8768), reason blocked by policy; no workaround launch attempted. Existing app previews may serve stale Python and need manual restart before new UI validation. Grafana running process 31180 and Loki 13596 are historical identities only; verify before shutdown.
+
 ## Restart Point
-1. Inspect Git status and reproduce 93 tests with `.\.venv\Scripts\python.exe -m unittest discover -s tests`. Initial prototype published; inspect Git status and remote before continuing.
-2. T01-T09 checked. Next: optional T10 ServiceNow dry-run payload. No instance configured. T11 authenticated direct phone access remains outstanding. T12 initial source publication is complete; no tagged release created.
-3. Repository: https://github.com/ArmandoSNHU/TechOpsagent. Initial prototype pushed to main. See docs/INTEGRATIONS.md. Grafana/Loki require service URLs for live verification.
-4. User granted full permissions and requested no routine prompts. Explicit no-model-download restriction persists. Installed local-model testing/runtime startup approved. Read docs/MODEL-EVALUATION.md before further inference.
-5. Privacy changes were browser-verified on a new 8767 process with empty settings. Older 8765/8766 processes may serve old code. Start the updated operator preview before live integration use. Secrets, databases, raw logs remain excluded from Git.
-6. Before any push, run tools.publish_guard --staged and --history. Follow setup.md for local .env configuration; do not publish operator settings.
+1. Read Git status and reproduce 104 tests using `.\.venv\Scripts\python.exe -m unittest discover -s tests`.
+2. Local Grafana http://127.0.0.1:3000/d/techops-local-lab and Loki http://127.0.0.1:3100/ready were verified. Check live health before reuse. Run tools.seed_loki --send-local for fresh synthetic events. See docs/INTEGRATIONS.md for install/start commands and hidden local credentials.
+3. ServiceNow adapter/draft implementation is done; live validation is blocked on the developer-instance URL and credentials entered only in local .env. Do not paste secrets into chat or tracked docs. T11 authenticated direct phone access remains outstanding.
+4. Start/restart updated TechOpsagent manually for full UI verification; automatic approval review blocked launching port 8768. Older 8765/8766/8767 previews may have stale Python code. Tests use fresh disposable servers; live handler and Grafana browser evidence are recorded separately.
+5. User granted full permissions/no routine prompts; no-model-download restriction persists. No model downloads or remote incident writes occurred.
+6. Run tools.publish_guard --staged and --history before every push. Keep .env, downloaded binaries, generated runtime configs, databases and logs excluded. Track only synthetic examples/screenshots and blank .env.example.

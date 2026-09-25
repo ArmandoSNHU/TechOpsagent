@@ -1,6 +1,7 @@
 "use strict";
 const $ = id => document.getElementById(id);
 let selected = "api_error";
+let currentIncident = null;
 async function api(path, options) {
   const response = await fetch(path, options);
   const data = await response.json();
@@ -14,6 +15,7 @@ function el(tag, text, cls) {
   return item;
 }
 function showIncident(r) {
+  currentIncident = r.id; $("servicenow-draft").disabled=false; $("servicenow-preview").hidden=true;
   $("empty").hidden = true; $("result").hidden = false;
   $("result-badge").textContent = "SUSPECTED";
   $("result-service").textContent = r.service + " / " + r.id.slice(0, 8);
@@ -87,6 +89,8 @@ async function loadIntegrationStatus() {
   try {
     const config = await api("/api/integrations");
     $("integration-summary").textContent = "GitHub: " + (config.github.repository || "not configured") + " · Grafana: " + (config.grafana.configured ? "configured" : "not configured") + " · Loki: " + (config.loki.configured ? "configured" : "not configured");
+    $("servicenow-read").disabled = !config.servicenow?.configured;
+    $("integration-summary").textContent += " · ServiceNow: " + (config.servicenow?.configured ? "configured" : "not configured");
     $("github-read").disabled = !config.github.configured;
     $("grafana-health").disabled = !config.grafana.configured;
     $("loki-controls").hidden = !config.loki.configured;
@@ -122,3 +126,25 @@ $("loki-read").addEventListener("click", async () => {
   finally {$("loki-read").disabled=false;}
 });
 loadIntegrationStatus();
+
+$("servicenow-read").addEventListener("click",async () => {
+  $("servicenow-read").disabled=true;
+  try {
+    const result=await api("/api/integrations/servicenow/read",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({page:1})});
+    $("servicenow-tickets").replaceChildren(...result.incidents.map(ticket => {
+      const item=el("div",undefined,"ticket"),use=el("button","Use as ticket context","secondary");
+      use.addEventListener("click",()=>{$("ticket").value=(ticket.title+"\n"+ticket.body).slice(0,4000);$("status").textContent="ServiceNow context loaded. Select independent evidence before investigating.";});
+      item.append(el("strong",ticket.number+" · "+ticket.title),el("p",ticket.body.slice(0,240)),use);return item;
+    }));
+    $("integration-status").textContent=result.incidents.length+" ServiceNow incidents read. No remote changes made.";
+  }catch(error){$("integration-status").textContent="ServiceNow: "+error.message;}
+  finally{$("servicenow-read").disabled=false;}
+});
+$("servicenow-draft").addEventListener("click",async()=>{
+  if(!currentIncident)return;
+  try{
+    const draft=await api("/api/incidents/"+encodeURIComponent(currentIncident)+"/servicenow-preview");
+    $("servicenow-preview").textContent=JSON.stringify(draft,null,2);$("servicenow-preview").hidden=false;
+    $("integration-status").textContent="Offline draft only. Review before manual submission; nothing was sent to ServiceNow.";
+  }catch(error){$("integration-status").textContent=error.message;}
+});

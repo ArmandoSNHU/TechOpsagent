@@ -4,3 +4,5 @@
 select{font:inherit;width:100%;padding:10px 12px;background:#fafbf6;border:1px solid var(--line);border-radius:5px;color:var(--ink);margin-bottom:20px}select:focus-visible{outline:3px solid #51791d;outline-offset:3px}#log-input{margin-bottom:20px}#hypotheses{font-size:11px;line-height:1.7;color:var(--muted);margin-top:15px}.hypothesis{margin:5px 0}.mode{max-width:48%;text-align:right}
 
 .integrations{margin-top:24px}.integration-actions{display:flex;gap:12px;flex-wrap:wrap}.secondary{background:#eef3e5;border:1px solid #9dab8a;color:var(--ink);border-radius:5px;padding:11px 14px;font:inherit;font-size:12px;cursor:pointer}.secondary:disabled{opacity:.5;cursor:default}#loki-controls{margin-top:20px}#loki-service{font:inherit;border:1px solid var(--line);padding:10px;margin:0 12px 10px 0;border-radius:5px;max-width:100%}.ticket{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}.ticket p{font-size:12px;line-height:1.6}
+
+#servicenow-preview{white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;padding:16px;background:var(--bg);font-size:12px;}

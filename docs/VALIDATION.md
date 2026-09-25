@@ -72,3 +72,12 @@ Author: Armando Gomez
 - Pre-change history audit: 63 file versions checked, zero findings after narrow classification of the pre-existing synthetic redaction fixture. Published screenshots were reviewed in the preceding privacy audit; no real keys/customer data were found.
 - New process on loopback port 8767 uses an empty settings profile and disposable local database. Chrome confirmed all integrations disabled and local setup guidance shown. Actual screenshot: screenshots/private-setup-snippet.png. This process intentionally differs from the operator's local .env profile.
 - Git hook enabled locally using core.hooksPath=.githooks. Workflow repeats checks on GitHub; manual image/content review remains required.
+
+## 2026-09-24 - live observability and ServiceNow adapter
+- `Ran 104 tests in 2.731s`, `OK`. Pip check: `No broken requirements found.` JavaScript syntax and documentation links passed.
+- Docker Desktop startup failed in its inference-manager socket initialization. Native official Windows builds used instead; Grafana OSS 13.2.2 and Loki 3.7.8 archives passed their official SHA256 checks. No model download occurred.
+- Loki readiness HTTP 200. Synthetic seeder dry-run checked, then --send-local returned HTTP 204 for three events. Live read returned three observations.
+- Grafana /api/health HTTP 200, database ok, version 13.2.2. Data source uid techops-loki and dashboard uid techops-local-lab verified through local APIs. Chrome showed all three real ingested synthetic events; screenshot saved.
+- The actual Loki route handler read the live service, saved an investigation, and returned cause Unhandled application exception with three observations. The actual ServiceNow preview handler produced a dry-run payload with short_description and description; remote_write false. ServiceNow transport/parsing/auth uses fixtures; no live instance has been configured.
+- Grafana's first attempt failed because its database directory was missing. A failing regression test preceded the directory-creation fix; subsequent startup completed its first-run migrations.
+- Automatic approval review rejected starting an updated TechOpsagent preview on port 8768 with reason blocked by policy. No fresh full-dashboard browser validation is claimed. Route HTTP tests use fresh disposable servers; live Grafana browser validation succeeded. Existing app previews may serve older Python code and must be restarted manually before testing new buttons.

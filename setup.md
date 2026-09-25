@@ -86,3 +86,6 @@ See [integration setup](docs/INTEGRATIONS.md) for GitHub Issues, Grafana health,
 Run `.\.venv\Scripts\python.exe -m techops.settings` to enter your integration settings locally. Tokens use hidden prompts. The ignored `.env` is never published; `.env.example` contains only blank fields. The app works as an offline lab without any tokens. Restart after configuration changes.
 
 Before publishing, enable the local guard once with `git config core.hooksPath .githooks`. Run `.\.venv\Scripts\python.exe -m tools.publish_guard --staged` after staging and `.\.venv\Scripts\python.exe -m tools.publish_guard --history`. Review staged screenshots and data manually as well. See [security guidance](SECURITY.md).
+
+## Wire Grafana, Loki, and ServiceNow
+Follow [the integration lab guide](docs/INTEGRATIONS.md#native-windows-observability-lab). It includes checksum-verified Windows installation, local startup, synthetic log ingestion, and ServiceNow developer-instance settings. Credentials remain in .env. Restart the app after configuration changes.

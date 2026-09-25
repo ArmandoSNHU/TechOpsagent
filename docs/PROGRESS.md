@@ -43,3 +43,8 @@ Real Chrome element capture after the GitHub read completed. Grafana and Loki ar
 Fresh installs have no connected accounts. Local setup stores settings in ignored .env; tokens are entered with hidden prompts. Real Chrome capture of a clean settings profile:
 
 ![Private setup snippet](screenshots/private-setup-snippet.png)
+
+## Live Grafana and Loki lab
+Actual Chrome element capture from the local Grafana dashboard. All three events are synthetic and were ingested into the running Loki service.
+
+![Grafana Loki synthetic events](screenshots/grafana-loki-snippet.png)

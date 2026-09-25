@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 ENV_PATH = Path(__file__).resolve().parents[1] / '.env'
-KEYS = ('GITHUB_REPOSITORY', 'GITHUB_TOKEN', 'GRAFANA_URL', 'GRAFANA_TOKEN', 'LOKI_URL', 'LOKI_TOKEN')
+KEYS = ('GITHUB_REPOSITORY', 'GITHUB_TOKEN', 'GRAFANA_URL', 'GRAFANA_TOKEN', 'LOKI_URL', 'LOKI_TOKEN', 'SERVICENOW_URL', 'SERVICENOW_TOKEN', 'SERVICENOW_USERNAME', 'SERVICENOW_PASSWORD', 'GRAFANA_ADMIN_PASSWORD')
 
 def load_settings(path=None, environ=None):
     path = ENV_PATH if path is None else Path(path)
@@ -46,13 +46,16 @@ def main():
     values = {}
     print('Local integration setup. Leave optional fields blank. No network requests are made.')
     for name in KEYS:
-        values[name] = getpass(name + ' (hidden): ') if name.endswith('_TOKEN') else input(name + ': ').strip()
+        values[name] = getpass(name + ' (hidden): ') if name.endswith(('_TOKEN','_PASSWORD')) else input(name + ': ').strip()
     try:
         from techops.connectors.github import GitHubIssues
         from techops.connectors.http import JsonReader
         if values['GITHUB_REPOSITORY']: GitHubIssues(values['GITHUB_REPOSITORY'])
         for name in ('GRAFANA_URL', 'LOKI_URL'):
             if values[name]: JsonReader(values[name])
+        if values['SERVICENOW_URL']:
+            from techops.connectors.servicenow import ServiceNow
+            ServiceNow(values['SERVICENOW_URL'],token=values['SERVICENOW_TOKEN'],username=values['SERVICENOW_USERNAME'],password=values['SERVICENOW_PASSWORD'])
         write_settings(ENV_PATH, values)
     except ValueError:
         raise SystemExit('Invalid settings. No .env written; use owner/repository and URLs without credentials.') from None
