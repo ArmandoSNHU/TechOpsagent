@@ -1,0 +1,67 @@
+# Validation record
+Author: Armando Gomez
+Date: 2026-09-24
+
+## Automated verification
+Command: `python -m unittest discover -s tests -v`
+
+```text
+Ran 23 tests in 0.838s
+
+OK
+```
+
+Coverage includes three expected diagnoses, unknown scenarios, untrusted ticket text, common credential redaction, truthful analysis-mode labeling, report sections, persisted/reopened records, parameterized lookups, API input validation, body size, content type, Host and Origin rejection, missing records, static paths, security headers, and documented API routes.
+
+`node --check techops/static/app.js` exited 0 with no output.
+`python -m techops.demo` returned `Exported 3 synthetic incident reports to examples/`.
+
+## Failure found and corrected
+The initial engine test run failed with `ModuleNotFoundError: No module named 'techops.engine'` before implementation. The expanded suite then exposed three Windows cleanup errors due to unclosed SQLite connections. A context manager now commits/rolls back and explicitly closes each connection. The full suite passed after the fix.
+
+## Browser validation
+- Opened the running loopback dashboard.
+- Ran all three scenarios through the scenario controls and investigation button.
+- Confirmed three saved history records.
+- Fetched the browser's report URL: HTTP 200, attachment filename incident-report.md, Armando Gomez attribution present.
+- Reopened the credential investigation from history after mobile emulation refreshed the page; observed “Credential rejected”.
+- Checked phone layout at 390 px: document width 390 px, no horizontal overflow.
+- Captured desktop (1440 px) and mobile (390 px) screenshots from the live app.
+- Browser console check returned `<no console messages found>` for errors/warnings after mobile reload.
+
+## Limits of this evidence
+Browser checks were performed through automated browser tools, not a physical phone. No real model, remote system, enterprise account, or live service failure was tested. Screenshots show synthetic data. API tests use a temporary database and local loopback server.
+
+## Sequential task execution — 2026-09-24
+T01 baseline: `Ran 23 tests in 0.695s`, `OK`; pip check clean.
+T02 migration: `Ran 28 tests in 0.607s`, `OK` against a real Uvicorn loopback server.
+T05 fault lab: `Ran 34 tests in 0.970s`, `OK`.
+T06 observed analysis/UI: `Ran 46 tests in 1.328s`, `OK`.
+T07 AI adapter and Windows CLI fix:
+
+```text
+Ran 57 tests in 1.509s
+
+OK
+```
+
+Commands: `.\.venv\Scripts\python.exe -m unittest discover -s tests -v`, `.\.venv\Scripts\python.exe -m techops.ai --dry-run --scenario api_error`, `.\.venv\Scripts\python.exe -m pip check`. Dry run returned dry_run true, inference_enabled false, E1/E2/E3; pip check returned `No broken requirements found.` JavaScript syntax check exited 0.
+
+The new test modules first failed on missing implementations. The actual AI CLI then exposed a cp1252 UnicodeEncodeError; a subprocess regression reproduced the failure before JSON console output was changed to escaped ASCII. The regression and full suite passed afterward.
+
+After restarting the preview, Chrome showed observed HTTP 500/200 and local DNS evidence. Imported JSONL produced Credential rejected, marked IMPORTED · UNVERIFIED; its report returned 200 and contained evidence citations and the unverified-data limitation. History reopened after mobile reload. Viewport and document width were both 390 px. Console errors/warnings: none. Capture: screenshots/live-evidence-snippet.png.
+
+No live model request, runtime start, model download, cloud call, or enterprise integration was executed. AI transport tests use mocks; accepted citations are not proof of factual accuracy.
+
+## T08 — approved local model evaluation, 2026-09-24
+Full suite: `Ran 60 tests in 1.591s`, `OK`. Final live run: six format/citation passes, 4.77–5.49 seconds per case, peak sampled GPU use 3432 MiB. Model: installed llama3.2:3b Q4_K_M. No model downloads. One unsupported configuration suggestion in the timeout case is explicitly flagged in MODEL-EVALUATION.md. Earlier 7B timeout and rejected 3B outputs are retained in that report. New tests observed failure before adding output-schema constraints and the opt-in evaluation runner.
+
+## 2026-09-24 - read-only integrations
+Author: Armando Gomez
+
+- `.\.venv\Scripts\python.exe -m unittest discover -s tests` returned `Ran 77 tests in 1.599s`, `OK`.
+- `node --check techops/static/app.js` exited 0.
+- CLI and dashboard read of ArmandoSNHU/TechOpsagent returned zero open issues. No remote changes.
+- Grafana/Loki: bounded requests and fixture coverage; no configured URLs or local listeners on 3000/3100, so no live validation claimed.
+- Updated preview started on 127.0.0.1:8766 after automatic approval review blocked stopping the existing preview. Port 8765 was left untouched.
+- Chrome verified successful GitHub response, disabled unconfigured Grafana control, and desktop width 1269 at viewport 1284. Actual screenshot: screenshots/integrations-snippet.png. Console had one resource 404; no JavaScript exception reported.
