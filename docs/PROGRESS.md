@@ -48,3 +48,11 @@ Fresh installs have no connected accounts. Local setup stores settings in ignore
 Actual Chrome element capture from the local Grafana dashboard. All three events are synthetic and were ingested into the running Loki service.
 
 ![Grafana Loki synthetic events](screenshots/grafana-loki-snippet.png)
+## Published interactive demo — 2026-09-24
+The [public demo](https://armandosnhu.github.io/TechOpsagent/) runs entirely from synthetic static assets. These are actual Chrome captures of the deployed HTTPS site, not design mockups. Desktop shows the checkout investigation; mobile shows the dependency-timeout case. The snippet isolates the draft diagnosis and troubleshooting steps. No real tickets, credentials, or local dashboards appear.
+
+![Published demo desktop](screenshots/pages-desktop.jpg)
+
+![Published demo mobile](screenshots/pages-mobile.jpg)
+
+![Draft diagnosis snippet](screenshots/pages-snippet.png)

@@ -55,10 +55,10 @@ Windows/PowerShell, Armando Gomez attribution, local-first execution, no unappro
 | T08 | 60 tests OK; six live cases passed format/citation checks; one unsupported suggestion flagged |
 | T09 | 77 tests OK; live GitHub CLI and browser read returned zero issues; Grafana/Loki fixture-tested |
 
-See docs/VALIDATION.md for exact commands and output. T08 was explicitly approved and evaluated with no model downloads. See docs/MODEL-EVALUATION.md for timings, memory, rejected attempts, and unsupported-output findings. T11 remains unchecked. T10 live instance validation remains pending. T12 initial source publication is complete; no tagged release created. Grafana/Loki are fixture-tested and remain unconfigured.
+See docs/VALIDATION.md for exact commands and output. T08 was explicitly approved and evaluated with no model downloads. See docs/MODEL-EVALUATION.md for timings, memory, rejected attempts, and unsupported-output findings. T11 remains unchecked. T10 live instance validation remains pending. T12 initial source publication is complete; no tagged release created. Current integration readiness is recorded in STATE.md.
 
 ## Setup improvement requested after initial publication
 - [x] T13: Guided Windows setup, private edits, readiness diagnostics and stale-preview detection. Acceptance: 120 tests OK, clean isolated Windows bootstrap succeeds without operator settings, occupied ports are preserved, and existing lab services pass readiness checks.
 
 ## Public demo
-- [ ] T14: Clickable GitHub Pages demo (working). Acceptance: synthetic-only artifact, three selectable investigations, matching report downloads, desktop/mobile browser checks, privacy guards, passing suite, and verified live Pages deployment.
+- [x] T14: Clickable GitHub Pages demo. Verified synthetic-only artifact, three selectable investigations, matching report downloads, desktop/mobile Chrome checks, privacy guards, 124 tests OK, and successful live deployment. See docs/PAGES.md and docs/PROGRESS.md.

@@ -73,14 +73,18 @@ One Windows entry point now supports install, private per-service configuration 
 
 Verification: `Ran 120 tests in 7.952s`, `OK`; pip check clean, doc links and diff check passed. Actual clean Windows bootstrap in an isolated path containing spaces exited 0 and reported READY with no .env and no accounts configured. Existing Grafana/Loki were reused and verified HEALTHY. Existing app on 8766 correctly reported stale; occupied-port run refused to launch or kill anything. No new persistent preview/model was started.
 
+## 2026-09-24 — T14 published and verified
+User authorized the clickable Pages demo. Published https://armandosnhu.github.io/TechOpsagent/ through workflow 36083523427 (success), source b3815e1. Companion privacy/test CI also succeeded. The browser-only demo supports three synthetic cases, evidence, suspected diagnoses, next steps, prevention, reset, and matching Markdown draft downloads. It reads no operator settings and contacts no backend integrations or models.
+
+Local suite: `Ran 124 tests in 4.846s`, `OK`; four new tests cover artifact allowlisting, fixture/report consistency, reproducibility, and refusal to merge old output. Public Chrome checks passed all three cases/report URLs, desktop and 390px mobile; no console errors/warnings. Actual public screenshots and an element snippet are in docs/screenshots/pages-*. No secrets or customer data are in the artifact. Source/history publication guards passed with zero findings. See docs/PAGES.md for rebuild/deployment instructions.
+
 ## Restart Point
-T14 local verification: `Ran 124 tests in 4.846s`, `OK`; four new artifact tests cover isolation, matching fixtures/reports, deterministic output, and refusal to merge existing directories. Chrome desktop/mobile checks passed for three cases and report URLs. Pages configured for Actions; deployment pending this commit. No operator configuration is read by the builder.
+Final documentation verification: `Ran 124 tests in 8.078s`, `OK`; staged/history scans reported zero findings. Public requests for private configuration, incident database, and backend source paths returned 404. Real live screenshots were reviewed before publication.
 
-Current task: T14 working. User explicitly authorized a clickable GitHub Pages deployment. Building a separate static, synthetic-only demo with an allowlisted artifact; no backend services or credentials are published.
-
-1. Read Git status and reproduce 120 tests using `.\.venv\Scripts\python.exe -m unittest discover -s tests`.
+1. Read Git status and reproduce 124 tests using `.\.venv\Scripts\python.exe -m unittest discover -s tests`.
 2. Local Grafana http://127.0.0.1:3000/d/techops-local-lab and Loki http://127.0.0.1:3100/ready were verified. Check live health before reuse. Run tools.seed_loki --send-local for fresh synthetic events. See docs/INTEGRATIONS.md for install/start commands and hidden local credentials.
 3. ServiceNow adapter/draft implementation is done; live validation is blocked on the developer-instance URL and credentials entered only in local .env. Do not paste secrets into chat or tracked docs. T11 authenticated direct phone access remains outstanding.
 4. Preferred setup: setup.ps1 -Check, -Configure -Service name, -StartLab, -Test, and foreground -Run. Use -Check -Live to identify stale previews. Older 8765/8766/8767 processes may serve old code; verify identity before manual shutdown. A fresh server test verifies build_id. No new persistent preview was launched during setup improvement.
 5. User granted full permissions/no routine prompts; no-model-download restriction persists. No model downloads or remote incident writes occurred.
 6. Run tools.publish_guard --staged and --history before every push. Keep .env, downloaded binaries, generated runtime configs, databases and logs excluded. Track only synthetic examples/screenshots and blank .env.example.
+7. T14 is complete. Public demo: https://armandosnhu.github.io/TechOpsagent/. Build via tools.build_pages to a new output folder; never upload the repository root. Pages auto-deploys main after tests and privacy checks. This demo is separate from T11 authenticated local-app access.
