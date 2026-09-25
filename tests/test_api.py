@@ -31,8 +31,12 @@ class ApiTests(unittest.TestCase):
     def test_integration_status_has_no_tokens(self):
         status,_,body=self.request('GET','/api/integrations')
         self.assertEqual(status,200)
-        self.assertEqual(json.loads(body)['github']['repository'],'ArmandoSNHU/TechOpsagent')
+        self.assertEqual(json.loads(body)['github']['repository'],'sample/project')
         self.assertNotIn('token',body.decode().lower())
+        self.assertNotIn('fixture',body.decode())
+    def test_private_files_are_not_served(self):
+        for path in ['/.env','/.env.example','/config/integrations.json','/data/incidents.sqlite3']:
+            with self.subTest(path=path):self.assertEqual(self.request('GET',path)[0],404)
     def test_github_read_uses_configured_repository(self):
         from unittest.mock import patch
         with patch('techops.integration_routes.GitHubIssues.list_issues',return_value={'tickets':[],'read_only':True}) as read:
@@ -118,7 +122,7 @@ class ApiTests(unittest.TestCase):
     def test_documented_routes(self):
         doc=(Path(__file__).resolve().parents[1]/'docs/API.md').read_text(encoding='utf-8')
         for route in ROUTES: self.assertIn(route, doc)
-        schema=create_app(self.db).openapi()
+        schema=create_app(self.db, settings={}).openapi()
         actual={method.upper()+' '+path for path,operations in schema['paths'].items()
                 for method in operations if method in {'get','post','put','patch','delete'} and path.startswith('/api/')}
         self.assertEqual(actual | {'GET /openapi.json'},set(ROUTES))

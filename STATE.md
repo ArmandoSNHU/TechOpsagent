@@ -47,9 +47,18 @@ User supplied the public repository URL following the privacy review and prior f
 ## 2026-09-24 - initial prototype published
 Initial commit 5f2053b successfully pushed to origin/main. Staged privacy review covered 61 files with zero blocked findings. GitHub no-reply commit email used. Documentation and screenshots are published; this is a source prototype publication, not a hosted service or tagged release.
 
+## 2026-09-24 - privacy hardening working
+Moving operator configuration into ignored .env, adding local setup prompts and publication guards. Rechecking published history; no live keys found so far.
+
+## 2026-09-24 - privacy hardening verified
+Private integration settings now load from ignored .env with process-environment precedence. Blank .env.example plus hidden-token setup CLI supports each user's own accounts. Public config defaults are empty. Local repository configuration was preserved without copying/creating any API key. No API key or customer data found in the published history audit; prior attribution/public repository references are not credentials and history was not rewritten.
+
+Verified `Ran 93 tests in 2.357s`, `OK`; pip check clean, JavaScript syntax and documentation links passed. Clean-profile Chrome preview on 8767 showed disabled integrations; screenshot saved. Pre-push checks and CI cover common credential formats, sensitive artifacts, and removed historical files, with documented limitations. Hook enabled locally. The .env is plaintext local storage, protected from Git and HTTP serving; it is not a secrets vault.
+
 ## Restart Point
-1. Inspect Git status and reproduce 77 tests with `.\.venv\Scripts\python.exe -m unittest discover -s tests`. Initial prototype published; inspect Git status and remote before continuing.
+1. Inspect Git status and reproduce 93 tests with `.\.venv\Scripts\python.exe -m unittest discover -s tests`. Initial prototype published; inspect Git status and remote before continuing.
 2. T01-T09 checked. Next: optional T10 ServiceNow dry-run payload. No instance configured. T11 authenticated direct phone access remains outstanding. T12 initial source publication is complete; no tagged release created.
 3. Repository: https://github.com/ArmandoSNHU/TechOpsagent. Initial prototype pushed to main. See docs/INTEGRATIONS.md. Grafana/Loki require service URLs for live verification.
 4. User granted full permissions and requested no routine prompts. Explicit no-model-download restriction persists. Installed local-model testing/runtime startup approved. Read docs/MODEL-EVALUATION.md before further inference.
-5. Preview 8766 was browser-verified; check health before reuse. Secrets, databases, raw logs remain excluded from Git.
+5. Privacy changes were browser-verified on a new 8767 process with empty settings. Older 8765/8766 processes may serve old code. Start the updated operator preview before live integration use. Secrets, databases, raw logs remain excluded from Git.
+6. Before any push, run tools.publish_guard --staged and --history. Follow setup.md for local .env configuration; do not publish operator settings.

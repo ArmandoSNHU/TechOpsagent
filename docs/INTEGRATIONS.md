@@ -2,14 +2,16 @@
 Author: Armando Gomez
 
 ## Configuration
-Edit config/integrations.json and restart the app. github_repository uses owner/name. grafana_url and loki_url remain null until a service is available. URLs must use HTTPS except for loopback HTTP. Never embed credentials in URLs or commit tokens. Optional process environment names: GITHUB_TOKEN, GRAFANA_TOKEN, LOKI_TOKEN. Values are never returned by the status API. .env files are not automatically loaded.
+Run `.\.venv\Scripts\python.exe -m techops.settings` to enter your own repository, optional service URLs, and optional tokens. Token prompts are hidden. This writes an ignored `.env` without contacting any service or overwriting an existing file. Alternatively copy `.env.example` to `.env` and edit locally. Restart the app after edits.
+
+Settings: GITHUB_REPOSITORY (owner/name), GITHUB_TOKEN, GRAFANA_URL, GRAFANA_TOKEN, LOKI_URL, LOKI_TOKEN. Process environment values override `.env`, including an explicitly empty value. Values are literal: no interpolation, command execution, export syntax, or multiline values. URLs must use HTTPS except loopback HTTP; never put credentials in URLs. A fresh clone starts with all integrations disabled. The retained config/integrations.json is an empty reference, not runtime configuration. Tokens are never returned by the status API.
 
 ## GitHub tickets
-The configured repository is ArmandoSNHU/TechOpsagent, discovered through the signed-in GitHub CLI. Read GitHub tickets loads one page of up to 20 open records, excludes pull requests, redacts common secrets, and caps ticket context. Use as ticket context copies text locally; it does not claim that the ticket was diagnosed. Independently select or import evidence. The adapter never follows URLs from ticket bodies.
+Choose your own repository during local setup. Read GitHub tickets loads one page of up to 20 open records, excludes pull requests, redacts common secrets, and caps ticket context. Use as ticket context copies text locally; it does not claim that the ticket was diagnosed. Independently select or import evidence. The adapter never follows URLs from ticket bodies.
 
 ```powershell
-.\.venv\Scripts\python.exe -m techops.connectors github --repository ArmandoSNHU/TechOpsagent
-.\.venv\Scripts\python.exe -m techops.connectors github --repository ArmandoSNHU/TechOpsagent --read
+.\.venv\Scripts\python.exe -m techops.connectors github --repository owner/repository
+.\.venv\Scripts\python.exe -m techops.connectors github --repository owner/repository --read
 ```
 First command previews the request offline; --read makes the request. Pages are explicit and bounded; no automatic unbounded pagination occurs. Remote comments, issue creation, and issue edits are not implemented. The live check succeeded with an empty issue list.
 

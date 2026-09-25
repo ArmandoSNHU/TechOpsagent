@@ -8,7 +8,7 @@ from techops.server import create_app
 class FastApiTests(unittest.TestCase):
     def test_factory_and_schema(self):
         with tempfile.TemporaryDirectory() as folder:
-            app = create_app(Path(folder)/'db.sqlite3')
+            app = create_app(Path(folder)/'db.sqlite3', settings={})
             self.assertIsInstance(app, FastAPI)
             schema = app.openapi()
             self.assertIn('/api/investigate', schema['paths'])
@@ -17,7 +17,7 @@ class FastApiTests(unittest.TestCase):
             self.assertEqual(request['properties']['ticket']['maxLength'], 4000)
     def test_chunked_body_limit(self):
         with tempfile.TemporaryDirectory() as folder:
-            app = create_app(Path(folder)/'db.sqlite3')
+            app = create_app(Path(folder)/'db.sqlite3', settings={})
             messages = []
             chunks = iter([{'type':'http.request','body':b'x'*9000,'more_body':True},
                            {'type':'http.request','body':b'x'*9000,'more_body':False}])

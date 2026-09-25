@@ -65,3 +65,10 @@ Author: Armando Gomez
 - Grafana/Loki: bounded requests and fixture coverage; no configured URLs or local listeners on 3000/3100, so no live validation claimed.
 - Updated preview started on 127.0.0.1:8766 after automatic approval review blocked stopping the existing preview. Port 8765 was left untouched.
 - Chrome verified successful GitHub response, disabled unconfigured Grafana control, and desktop width 1269 at viewport 1284. Actual screenshot: screenshots/integrations-snippet.png. Console had one resource 404; no JavaScript exception reported.
+
+## 2026-09-24 - private configuration and publication guard
+- Full suite: `Ran 93 tests in 2.357s`, `OK`. Includes literal .env parsing, environment precedence, no-overwrite setup, hidden token prompts, unconfigured fresh install, token-free API status, HTTP 404 for private files, force-added private artifact detection, and detection of removed secrets in Git history.
+- `pip check`: `No broken requirements found.` JavaScript syntax and Markdown links passed.
+- Pre-change history audit: 63 file versions checked, zero findings after narrow classification of the pre-existing synthetic redaction fixture. Published screenshots were reviewed in the preceding privacy audit; no real keys/customer data were found.
+- New process on loopback port 8767 uses an empty settings profile and disposable local database. Chrome confirmed all integrations disabled and local setup guidance shown. Actual screenshot: screenshots/private-setup-snippet.png. This process intentionally differs from the operator's local .env profile.
+- Git hook enabled locally using core.hooksPath=.githooks. Workflow repeats checks on GitHub; manual image/content review remains required.

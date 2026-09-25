@@ -7,3 +7,18 @@ data/*
 !data/.gitkeep
 .venv/
 *.log
+
+# Private operator configuration and artifacts
+*.local.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.bak
+uploads/
+exports/
+backups/

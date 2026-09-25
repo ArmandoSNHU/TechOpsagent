@@ -90,6 +90,7 @@ async function loadIntegrationStatus() {
     $("github-read").disabled = !config.github.configured;
     $("grafana-health").disabled = !config.grafana.configured;
     $("loki-controls").hidden = !config.loki.configured;
+    if (!config.github.configured && !config.grafana.configured && !config.loki.configured) $("integration-status").textContent = "Integrations are optional. Follow the local setup instructions to connect your accounts; credentials stay on this computer.";
   } catch (error) { $("integration-status").textContent = error.message; }
 }
 $("github-read").addEventListener("click", async () => {

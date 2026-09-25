@@ -30,13 +30,13 @@ class LogRequest(BaseModel):
     log_text: str = Field(min_length=1,max_length=12000)
     ticket: str = Field(default='',max_length=4000)
 
-def create_app(database=None):
+def create_app(database=None, settings=None):
     store = Store(database or ROOT.parent/'data'/'incidents.sqlite3')
     app = FastAPI(title='TechOpsagent', version='0.3.0',
                   description='Local support operations lab by Armando Gomez. Synthetic evidence; suspected causes.',
                   docs_url=None, redoc_url=None)
     app.add_middleware(LocalOnlyMiddleware)
-    app.include_router(integration_router(store))
+    app.include_router(integration_router(store, settings))
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request, exc):

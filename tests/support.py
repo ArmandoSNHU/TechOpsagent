@@ -6,11 +6,11 @@ import uvicorn
 from techops.server import create_app
 
 class LiveServer:
-    def __init__(self, database):
+    def __init__(self, database, settings=None):
         self.socket = socket.socket()
         self.socket.bind(('127.0.0.1',0))
         self.port = self.socket.getsockname()[1]
-        self.server = uvicorn.Server(uvicorn.Config(create_app(database),host='127.0.0.1',port=self.port,
+        self.server = uvicorn.Server(uvicorn.Config(create_app(database, settings={'GITHUB_REPOSITORY':'sample/project','GITHUB_TOKEN':'fixture'} if settings is None else settings),host='127.0.0.1',port=self.port,
                     log_level='error',access_log=False,proxy_headers=False,ws='none'))
         self.thread = threading.Thread(target=self.server.run,kwargs={'sockets':[self.socket]},daemon=True)
     def start(self):

@@ -38,3 +38,8 @@ Real Chrome element capture after the GitHub read completed. Grafana and Loki ar
 Real Chrome element capture after the GitHub read completed. Grafana and Loki are visibly unconfigured.
 
 ![Connected sources snippet](screenshots/integrations-snippet.png)
+
+## Private local configuration
+Fresh installs have no connected accounts. Local setup stores settings in ignored .env; tokens are entered with hidden prompts. Real Chrome capture of a clean settings profile:
+
+![Private setup snippet](screenshots/private-setup-snippet.png)

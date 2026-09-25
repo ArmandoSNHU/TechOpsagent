@@ -1,7 +1,5 @@
 """Configured read-only integrations. Request bodies cannot choose remote hosts."""
-import json
-import os
-from pathlib import Path
+from techops.settings import load_settings
 import time
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel,ConfigDict,Field
@@ -19,9 +17,10 @@ class LokiRead(BaseModel):
     service:str=Field(min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_.:-]+$')
     minutes:int=Field(default=15,ge=1,le=60)
 
-def integration_router(store):
+def integration_router(store, settings=None):
     router=APIRouter()
-    config=json.loads((Path(__file__).resolve().parent.parent/'config/integrations.json').read_text(encoding='utf-8'))
+    settings=load_settings() if settings is None else settings
+    config={name:settings.get(key, '') for name,key in [('github_repository','GITHUB_REPOSITORY'),('grafana_url','GRAFANA_URL'),('loki_url','LOKI_URL')]}
     def required(name):
         value=config.get(name)
         if not value: raise HTTPException(409,name+' is not configured')
@@ -40,7 +39,7 @@ def integration_router(store):
     @router.post('/api/integrations/github/read')
     def github_read(body:GitHubRead):
         repository=required('github_repository')
-        return upstream(lambda:GitHubIssues(repository,token=os.environ.get('GITHUB_TOKEN')).list_issues(page=body.page,per_page=20))
+        return upstream(lambda:GitHubIssues(repository,token=settings.get('GITHUB_TOKEN')).list_issues(page=body.page,per_page=20))
 
     @router.get('/api/integrations/github/preview')
     def github_preview():
@@ -49,13 +48,13 @@ def integration_router(store):
     @router.get('/api/integrations/grafana/health')
     def grafana_health():
         url=required('grafana_url')
-        return upstream(lambda:Grafana(url,token=os.environ.get('GRAFANA_TOKEN')).health())
+        return upstream(lambda:Grafana(url,token=settings.get('GRAFANA_TOKEN')).health())
 
     @router.post('/api/integrations/loki/analyze',status_code=201)
     def loki_analyze(body:LokiRead):
         url=required('loki_url')
         end=int(time.time())
-        logs=upstream(lambda:Loki(url,token=os.environ.get('LOKI_TOKEN')).query(body.service,end-body.minutes*60,end))
+        logs=upstream(lambda:Loki(url,token=settings.get('LOKI_TOKEN')).query(body.service,end-body.minutes*60,end))
         if not logs['observations']: raise HTTPException(404,'No logs in the selected window')
         result=analyze(logs['observations'],environment='imported_logs')
         result.update(title='Loki evidence: '+body.service,service=body.service,source='loki',source_truncated=logs['truncated'])
