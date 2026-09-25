@@ -90,3 +90,10 @@ Author: Armando Gomez
 - Clean Windows installation in an isolated ignored folder with spaces: setup.ps1 -Install -Check exited 0, created a new .venv, reported READY, and left all integrations optional/unconfigured. No .env was created or operator credential copied. Bootstrap log retained only under ignored data.
 - PowerShell help/missing-environment behavior exercised from an isolated folder. Pip check: No broken requirements found. Documentation links and git diff --check passed.
 - No fresh long-running app preview was launched in this task. Fresh disposable HTTP tests validate the health fingerprint; existing stale previews remain available for deliberate manual shutdown/restart.
+# 2026-09-24 — GitHub Pages demo, local validation
+
+Author: Armando Gomez
+
+The new artifact tests first failed with `ModuleNotFoundError: No module named 'tools.build_pages'`. After implementation, `Ran 4 tests in 0.158s`, `OK`. Full suite: `Ran 124 tests in 4.846s`, `OK`. `node --check site/app.js` and `git diff --cached --check` exited 0.
+
+Chrome preview at loopback port 8770 used only the generated public artifact. All three cases selected/reset correctly, each rendered three observations, and each report returned 200 with the matching cause and draft limitation. Reset returned focus to Investigate. Desktop 1440px and mobile 390px had no horizontal overflow; mobile measured 390/390 for all cases. No console warnings/errors were found. A simulated fixture-fetch failure displayed the unavailable state. Live deployment verification and screenshots are recorded below when complete.

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore three synthetic support incidents in TechOpsagent, an evidence-driven operations project by Armando Gomez.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>TechOpsagent · Interactive demo</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to workspace</a>
+<header class="topbar">
+  <a class="brand" href="./"><span class="mark" aria-hidden="true">T<span>↗</span></span> TechOps<span class="brand-light">agent</span></a>
+  <div class="demo-tag"><span class="dot"></span> Interactive demo</div>
+  <a class="source-link" href="https://github.com/ArmandoSNHU/TechOpsagent">View source <span aria-hidden="true">↗</span></a>
+</header>
+<main id="main">
+  <section class="intro" aria-labelledby="page-title">
+    <div><p class="eyebrow">SUPPORT OPERATIONS / FIELD NOTES 001</p>
+    <h1 id="page-title">From incident<br>to <em>understanding.</em></h1>
+    <p class="lede">Follow the evidence. Find a likely cause. Leave the next engineer a clear path forward.</p></div>
+    <aside class="intro-note"><span class="note-number">03</span><div><strong>Incidents. One workflow.</strong><p>Choose a case below to explore a guided investigation. All evidence is synthetic.</p></div></aside>
+  </section>
+  <div class="workspace-heading"><h2>Investigation workspace</h2><span class="small-label">BROWSER ONLY <span aria-hidden="true">/</span> NO SIGN-IN</span></div>
+  <div class="workspace">
+    <aside class="queue" aria-labelledby="queue-title">
+      <div class="queue-heading"><h3 id="queue-title">Incident queue</h3><span>3 cases</span></div>
+      <div id="scenarios"><p class="loading">Loading synthetic cases…</p></div>
+      <div class="queue-foot"><span aria-hidden="true">◎</span><p>Practice, without production.<br>No live services are contacted.</p></div>
+    </aside>
+    <section class="case" aria-labelledby="case-title">
+      <div class="case-top"><span id="case-id" class="eyebrow">CASE 01 / SYNTHETIC</span><span id="severity" class="severity">P2</span></div>
+      <h2 id="case-title">Preparing your workspace</h2>
+      <p id="description" class="description">The demo loads three bundled examples. Nothing needs to be installed.</p>
+      <div class="service-row"><span class="service-label">AFFECTED SERVICE</span><code id="service">—</code></div>
+      <div class="action-row"><button id="investigate" class="primary" disabled>Investigate this incident <span aria-hidden="true">↗</span></button><button id="reset" class="text-button" hidden>Reset case</button></div>
+      <p id="status" role="status" class="status">Loading demo…</p>
+      <div id="empty" class="empty"><span class="empty-symbol" aria-hidden="true">⌁</span><h3>A useful answer starts with evidence.</h3><p>Open the investigation to compare signals, review a suspected cause, and export a draft report.</p><div class="steps"><span>01 / Evidence</span><span>02 / Diagnosis</span><span>03 / Handoff</span></div></div>
+      <div id="results" hidden>
+        <div class="result-nav" aria-label="Investigation sections"><a href="#evidence">Evidence</a><a href="#diagnosis">Diagnosis</a><a href="#handoff">Handoff <span aria-hidden="true">↓</span></a></div>
+        <section id="evidence" aria-labelledby="evidence-title"><div class="section-heading"><h3 id="evidence-title">01 <span>Evidence trail</span></h3><span class="small-label">3 OBSERVATIONS</span></div><div id="evidence-list"></div></section>
+        <section id="diagnosis" aria-labelledby="diagnosis-title"><div class="section-heading"><h3 id="diagnosis-title">02 <span>Working diagnosis</span></h3></div><div class="diagnosis-card"><span class="draft-label">SUSPECTED · NOT VERIFIED</span><h4 id="cause"></h4><p id="impact"></p></div><h4 class="steps-title">Recommended next steps</h4><ol id="next-steps"></ol></section>
+        <section id="handoff" aria-labelledby="handoff-title"><div class="section-heading"><h3 id="handoff-title">03 <span>Engineer handoff</span></h3></div><p class="prevention-label">PREVENTION</p><p id="prevention"></p><div class="download-box"><div><strong>Take the investigation with you.</strong><p>Evidence, impact, next steps, and limitations in one Markdown report.</p></div><a id="download" class="primary" download>Download draft RCA <span aria-hidden="true">↓</span></a></div><p class="limitation">Synthetic fixtures · Deterministic explanation · Draft RCA. No live probes, AI inference, remediation, or remote writes occur in this demo.</p></section>
+      </div>
+    </section>
+  </div>
+  <section class="beyond"><div><p class="eyebrow">BEYOND THE DEMO</p><h2>Built for a deeper investigation.</h2><p>The full local app adds controlled HTTP failures, log intake, saved history, optional local models, and integration adapters.</p></div><a href="https://github.com/ArmandoSNHU/TechOpsagent/blob/main/setup.md">Run the full project <span aria-hidden="true">↗</span></a></section>
+</main>
+<footer><span>Designed &amp; built by <strong>Armando Gomez</strong></span><span>TechOpsagent / Support operations lab</span></footer>
+<noscript><p class="noscript">Enable JavaScript to use the interactive demo. Sample reports: <a href="./reports/api_error.md">Checkout</a>, <a href="./reports/dependency_timeout.md">Inventory</a>, <a href="./reports/invalid_credential.md">Authentication</a>.</p></noscript>
+</body>
+</html>

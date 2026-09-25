@@ -1,6 +1,8 @@
 # TechOpsagent setup
 Author: Armando Gomez
 
+Want to try it first? **[Open the browser demo](https://armandosnhu.github.io/TechOpsagent/)** on desktop or phone. It uses only synthetic cases and needs no installation. The steps below set up the full local application. See [Pages deployment and privacy](docs/PAGES.md) for the public demo.
+
 ## First run
 Use Windows 11, PowerShell, Git, and Python 3.12+ (3.13 is verified). Open PowerShell in the cloned repository. No model or cloud account is needed.
 

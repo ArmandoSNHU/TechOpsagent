@@ -74,6 +74,10 @@ One Windows entry point now supports install, private per-service configuration 
 Verification: `Ran 120 tests in 7.952s`, `OK`; pip check clean, doc links and diff check passed. Actual clean Windows bootstrap in an isolated path containing spaces exited 0 and reported READY with no .env and no accounts configured. Existing Grafana/Loki were reused and verified HEALTHY. Existing app on 8766 correctly reported stale; occupied-port run refused to launch or kill anything. No new persistent preview/model was started.
 
 ## Restart Point
+T14 local verification: `Ran 124 tests in 4.846s`, `OK`; four new artifact tests cover isolation, matching fixtures/reports, deterministic output, and refusal to merge existing directories. Chrome desktop/mobile checks passed for three cases and report URLs. Pages configured for Actions; deployment pending this commit. No operator configuration is read by the builder.
+
+Current task: T14 working. User explicitly authorized a clickable GitHub Pages deployment. Building a separate static, synthetic-only demo with an allowlisted artifact; no backend services or credentials are published.
+
 1. Read Git status and reproduce 120 tests using `.\.venv\Scripts\python.exe -m unittest discover -s tests`.
 2. Local Grafana http://127.0.0.1:3000/d/techops-local-lab and Loki http://127.0.0.1:3100/ready were verified. Check live health before reuse. Run tools.seed_loki --send-local for fresh synthetic events. See docs/INTEGRATIONS.md for install/start commands and hidden local credentials.
 3. ServiceNow adapter/draft implementation is done; live validation is blocked on the developer-instance URL and credentials entered only in local .env. Do not paste secrets into chat or tracked docs. T11 authenticated direct phone access remains outstanding.

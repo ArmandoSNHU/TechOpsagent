@@ -59,3 +59,6 @@ See docs/VALIDATION.md for exact commands and output. T08 was explicitly approve
 
 ## Setup improvement requested after initial publication
 - [x] T13: Guided Windows setup, private edits, readiness diagnostics and stale-preview detection. Acceptance: 120 tests OK, clean isolated Windows bootstrap succeeds without operator settings, occupied ports are preserved, and existing lab services pass readiness checks.
+
+## Public demo
+- [ ] T14: Clickable GitHub Pages demo (working). Acceptance: synthetic-only artifact, three selectable investigations, matching report downloads, desktop/mobile browser checks, privacy guards, passing suite, and verified live Pages deployment.

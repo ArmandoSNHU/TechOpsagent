@@ -1,6 +1,8 @@
 # TechOpsagent
 **Support operations lab · Armando Gomez**
 
+**[Open the interactive demo](https://armandosnhu.github.io/TechOpsagent/)** — three synthetic incidents, evidence trails, and downloadable draft RCA reports. Works on desktop and phone; no installation or sign-in. [Demo build and deployment guide](docs/PAGES.md).
+
 A local incident-investigation workspace that turns controlled local failures and imported structured observations into evidence trails, troubleshooting steps, and downloadable incident reports.
 
 ![Desktop investigation workspace](docs/screenshots/fastapi-desktop.jpg)
