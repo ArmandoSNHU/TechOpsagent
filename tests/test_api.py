@@ -78,6 +78,10 @@ class ApiTests(unittest.TestCase):
     def test_bad_log_intake(self):
         status,_,_=self.request('POST','/api/analyze',json.dumps({'log_text':'not JSON'}),{'Content-Type':'application/json'})
         self.assertEqual(status,400)
+    def test_health_identifies_started_source(self):
+        from techops.runtime import build_id
+        value=json.loads(self.request('GET','/api/health')[2])
+        self.assertEqual(value['build_id'],build_id())
     def test_fastapi_health_and_openapi(self):
         self.assertEqual(json.loads(self.request('GET','/api/health')[2])['framework'],'fastapi')
         status,_,body=self.request('GET','/openapi.json')

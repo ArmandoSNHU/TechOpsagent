@@ -38,3 +38,41 @@ class LabTests(unittest.TestCase):
             root=Path(d);write_settings(root/'.env',{'GRAFANA_URL':'https://example.com'})
             with self.assertRaises(ValueError):prepare(root)
             self.assertEqual(load_settings(root/'.env',{})['GRAFANA_URL'],'https://example.com')
+
+    def test_start_missing_binaries_does_not_change_env(self):
+        import tempfile
+        from pathlib import Path
+        from tools.local_lab import start
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            with patch('tools.local_lab.WINDOWS',True):
+                with self.assertRaisesRegex(RuntimeError,'binaries missing'):start(root,wait_seconds=0)
+            self.assertFalse((root/'.env').exists())
+    def test_readiness_wait_has_bounded_timeout(self):
+        from tools.local_lab import wait_ready
+        with patch('tools.local_lab.probe_service',return_value={'status':'starting'}),patch('tools.local_lab.time.monotonic',side_effect=[0,1,2]):
+            self.assertFalse(wait_ready('grafana',3000,1))
+    def test_readiness_wait_succeeds_on_correct_service(self):
+        from tools.local_lab import wait_ready
+        with patch('tools.local_lab.probe_service',return_value={'status':'healthy'}):
+            self.assertTrue(wait_ready('loki',3100,1))
+
+    def test_occupied_wrong_service_leaves_configuration_untouched(self):
+        import tempfile
+        from pathlib import Path
+        from tools.local_lab import start,GRAFANA_VERSION
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            for relative in ['data/observability/loki/loki-windows-amd64.exe','data/observability/grafana/grafana-'+GRAFANA_VERSION+'/bin/grafana.exe']:
+                p=root/relative;p.parent.mkdir(parents=True,exist_ok=True);p.touch()
+            with patch('tools.local_lab.WINDOWS',True),patch('tools.local_lab.socket.socket') as sock,patch('tools.local_lab.probe_service',return_value={'status':'unexpected_response'}):
+                sock.return_value.__enter__.return_value.connect_ex.return_value=0
+                with self.assertRaisesRegex(RuntimeError,'does not identify'):start(root,wait_seconds=0)
+            self.assertFalse((root/'.env').exists())
+    def test_readiness_detects_process_exit(self):
+        from tools.local_lab import wait_ready
+        from unittest.mock import Mock
+        process=Mock();process.poll.return_value=1
+        with patch('tools.local_lab.probe_service') as probe:
+            self.assertFalse(wait_ready('grafana',3000,300,process=process))
+            probe.assert_not_called()

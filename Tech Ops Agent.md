@@ -56,3 +56,6 @@ Windows/PowerShell, Armando Gomez attribution, local-first execution, no unappro
 | T09 | 77 tests OK; live GitHub CLI and browser read returned zero issues; Grafana/Loki fixture-tested |
 
 See docs/VALIDATION.md for exact commands and output. T08 was explicitly approved and evaluated with no model downloads. See docs/MODEL-EVALUATION.md for timings, memory, rejected attempts, and unsupported-output findings. T11 remains unchecked. T10 live instance validation remains pending. T12 initial source publication is complete; no tagged release created. Grafana/Loki are fixture-tested and remain unconfigured.
+
+## Setup improvement requested after initial publication
+- [x] T13: Guided Windows setup, private edits, readiness diagnostics and stale-preview detection. Acceptance: 120 tests OK, clean isolated Windows bootstrap succeeds without operator settings, occupied ports are preserved, and existing lab services pass readiness checks.

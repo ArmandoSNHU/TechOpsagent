@@ -48,3 +48,5 @@ Integration routes return 409 for a missing configured service, 502 for sanitize
 
 - POST /api/integrations/servicenow/read: read one bounded page of active incidents; 409 if instance/auth missing.
 - GET /api/incidents/{incident_id}/servicenow-preview: offline draft payload for a saved investigation; 404 if missing. Never sends a remote write.
+
+Health includes build_id, a public-source fingerprint captured at app startup. Local diagnostics compare it with current source to detect stale previews. It excludes .env and runtime data; restart after configuration changes even if build_id is unchanged.

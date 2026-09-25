@@ -16,6 +16,7 @@ from techops.evidence import analyze, parse_jsonl
 from techops.lab import collect
 from techops.ai import LocalModelAdapter
 from techops.integration_routes import integration_router
+from techops.runtime import build_id
 
 ROOT = Path(__file__).resolve().parent
 ROUTES = ('GET /api/health', 'GET /api/scenarios', 'GET /api/incidents', 'GET /api/incidents/{id}', 'GET /api/incidents/{id}/report', 'POST /api/investigate', 'GET /openapi.json', 'POST /api/lab/investigate', 'POST /api/analyze', 'GET /api/incidents/{id}/ai-preview', 'GET /api/integrations', 'POST /api/integrations/github/read', 'GET /api/integrations/github/preview', 'GET /api/integrations/grafana/health', 'POST /api/integrations/loki/analyze', 'POST /api/integrations/servicenow/read', 'GET /api/incidents/{incident_id}/servicenow-preview')
@@ -31,6 +32,7 @@ class LogRequest(BaseModel):
     ticket: str = Field(default='',max_length=4000)
 
 def create_app(database=None, settings=None):
+    started_build=build_id()
     store = Store(database or ROOT.parent/'data'/'incidents.sqlite3')
     app = FastAPI(title='TechOpsagent', version='0.3.0',
                   description='Local support operations lab by Armando Gomez. Synthetic evidence; suspected causes.',
@@ -52,7 +54,7 @@ def create_app(database=None, settings=None):
 
     @app.get('/api/health')
     def health():
-        return {'status':'ok','mode':'simulated','version':'0.3.0','framework':'fastapi'}
+        return {'status':'ok','mode':'simulated','version':'0.3.0','framework':'fastapi','build_id':started_build}
 
     @app.get('/api/scenarios')
     def scenarios():

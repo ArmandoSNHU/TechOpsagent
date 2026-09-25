@@ -1,9 +1,14 @@
 """Local, literal .env settings. Never execute or interpolate configuration."""
 import os
+import argparse
+import secrets
+import warnings
 from pathlib import Path
 
 ENV_PATH = Path(__file__).resolve().parents[1] / '.env'
 KEYS = ('GITHUB_REPOSITORY', 'GITHUB_TOKEN', 'GRAFANA_URL', 'GRAFANA_TOKEN', 'LOKI_URL', 'LOKI_TOKEN', 'SERVICENOW_URL', 'SERVICENOW_TOKEN', 'SERVICENOW_USERNAME', 'SERVICENOW_PASSWORD', 'GRAFANA_ADMIN_PASSWORD')
+GROUPS = {'github':KEYS[:2], 'grafana':('GRAFANA_URL','GRAFANA_TOKEN','GRAFANA_ADMIN_PASSWORD'),
+          'loki':('LOKI_URL','LOKI_TOKEN'), 'servicenow':KEYS[6:10], 'all':KEYS}
 
 def load_settings(path=None, environ=None):
     path = ENV_PATH if path is None else Path(path)
@@ -38,27 +43,56 @@ def write_settings(path, values):
     with os.fdopen(descriptor, 'w', encoding='utf-8') as handle:
         handle.write('\n'.join(lines) + '\n')
 
-def main():
-    from getpass import getpass
-    if ENV_PATH.exists():
-        print('.env already exists. Edit it locally; its contents will not be displayed.')
-        return
-    values = {}
-    print('Local integration setup. Leave optional fields blank. No network requests are made.')
-    for name in KEYS:
-        values[name] = getpass(name + ' (hidden): ') if name.endswith(('_TOKEN','_PASSWORD')) else input(name + ': ').strip()
+def save_settings(path, values, expected=None):
+    """Replace only the snapshot that was edited; never keep secret backup files."""
+    path=Path(path)
+    if path.is_symlink(): raise ValueError('Refusing to replace a symlink')
+    if expected is None:
+        write_settings(path,values);return
+    temporary=path.with_name('.env.'+secrets.token_hex(8))
     try:
-        from techops.connectors.github import GitHubIssues
-        from techops.connectors.http import JsonReader
-        if values['GITHUB_REPOSITORY']: GitHubIssues(values['GITHUB_REPOSITORY'])
-        for name in ('GRAFANA_URL', 'LOKI_URL'):
-            if values[name]: JsonReader(values[name])
-        if values['SERVICENOW_URL']:
-            from techops.connectors.servicenow import ServiceNow
-            ServiceNow(values['SERVICENOW_URL'],token=values['SERVICENOW_TOKEN'],username=values['SERVICENOW_USERNAME'],password=values['SERVICENOW_PASSWORD'])
-        write_settings(ENV_PATH, values)
-    except ValueError:
-        raise SystemExit('Invalid settings. No .env written; use owner/repository and URLs without credentials.') from None
+        write_settings(temporary,values)
+        if not path.exists() or path.read_bytes()!=expected:raise RuntimeError('Settings changed while editing; reload before saving')
+        os.replace(temporary,path)
+    finally:
+        if temporary.exists():temporary.unlink()
+
+def validate_settings(values):
+    from techops.connectors.github import GitHubIssues
+    from techops.connectors.http import JsonReader
+    from techops.connectors.servicenow import ServiceNow
+    if values.get('GITHUB_REPOSITORY'): GitHubIssues(values['GITHUB_REPOSITORY'])
+    for prefix in ('GRAFANA','LOKI'):
+        if values.get(prefix+'_URL'): JsonReader(values[prefix+'_URL'],token=values.get(prefix+'_TOKEN'))
+    if values.get('SERVICENOW_URL'):
+        ServiceNow(values['SERVICENOW_URL'],token=values.get('SERVICENOW_TOKEN'),username=values.get('SERVICENOW_USERNAME'),password=values.get('SERVICENOW_PASSWORD'))
+
+def main(argv=None):
+    from getpass import getpass,GetPassWarning
+    parser=argparse.ArgumentParser(description='Private local settings; no network calls or model startup.')
+    parser.add_argument('--edit',action='store_true',help='Edit an existing file; Enter keeps a value and - clears it')
+    parser.add_argument('--service',choices=GROUPS,default='all')
+    args=parser.parse_args(argv)
+    if ENV_PATH.exists() and not args.edit:
+        print('.env already exists. Use --edit --service github|grafana|loki|servicenow to change it privately.');return
+    try:
+        expected=ENV_PATH.read_bytes() if ENV_PATH.exists() else None
+        values=load_settings(ENV_PATH,{})
+        print('Local integration setup. Enter keeps existing values; - clears a field. Nothing is sent.')
+        with warnings.catch_warnings():
+            warnings.simplefilter('error',GetPassWarning)
+            for name in GROUPS[args.service]:
+                status='set' if values[name] else 'empty'
+                prompt=f'{name} [{status}]: '
+                value=getpass(prompt) if name.endswith(('_TOKEN','_PASSWORD')) else input(prompt).strip()
+                if value=='-':values[name]=''
+                elif value:values[name]=value
+        validate_settings(values)
+        save_settings(ENV_PATH,values,expected)
+    except (EOFError,KeyboardInterrupt,GetPassWarning):
+        raise SystemExit('Setup cancelled or hidden input unavailable. No settings saved; use an interactive terminal.') from None
+    except (ValueError,OSError,RuntimeError):
+        raise SystemExit('Settings were not saved. Check field formats/authentication choice and reload if the file changed.') from None
     print('Saved local .env. Restart the application to apply settings. Do not share this file.')
 
 if __name__ == '__main__': main()

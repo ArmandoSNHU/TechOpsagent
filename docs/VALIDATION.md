@@ -81,3 +81,12 @@ Author: Armando Gomez
 - The actual Loki route handler read the live service, saved an investigation, and returned cause Unhandled application exception with three observations. The actual ServiceNow preview handler produced a dry-run payload with short_description and description; remote_write false. ServiceNow transport/parsing/auth uses fixtures; no live instance has been configured.
 - Grafana's first attempt failed because its database directory was missing. A failing regression test preceded the directory-creation fix; subsequent startup completed its first-run migrations.
 - Automatic approval review rejected starting an updated TechOpsagent preview on port 8768 with reason blocked by policy. No fresh full-dashboard browser validation is claimed. Route HTTP tests use fresh disposable servers; live Grafana browser validation succeeded. Existing app previews may serve older Python code and must be restarted manually before testing new buttons.
+
+## 2026-09-24 - guided setup and diagnostics
+- `.\setup.ps1 -Test`: `Ran 120 tests in 7.952s`, `OK`. Coverage includes preserving unrelated credentials, explicit clearing, failed edits, concurrent edits, secret-free diagnostics, redirects, wrong listeners, stale fingerprints, fresh-server health, missing binaries, exited processes, and bounded readiness waits.
+- `.\setup.ps1 -Check`: Core environment READY, configuration valid. Optional ServiceNow remains unconfigured. No values/private URLs displayed.
+- `.\setup.ps1 -Check -Live -Port 8766`: intentionally exited 1, correctly reported the old app as stale and Grafana/Loki healthy. `.\setup.ps1 -Run -Port 8766` refused the occupied port before launching anything.
+- `.\setup.ps1 -StartLab`: reused both existing local services, verified actual readiness, printed HEALTHY for both; no existing process terminated.
+- Clean Windows installation in an isolated ignored folder with spaces: setup.ps1 -Install -Check exited 0, created a new .venv, reported READY, and left all integrations optional/unconfigured. No .env was created or operator credential copied. Bootstrap log retained only under ignored data.
+- PowerShell help/missing-environment behavior exercised from an isolated folder. Pip check: No broken requirements found. Documentation links and git diff --check passed.
+- No fresh long-running app preview was launched in this task. Fresh disposable HTTP tests validate the health fingerprint; existing stale previews remain available for deliberate manual shutdown/restart.

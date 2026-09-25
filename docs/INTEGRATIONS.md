@@ -2,7 +2,7 @@
 Author: Armando Gomez
 
 ## Configuration
-Run `.\.venv\Scripts\python.exe -m techops.settings` to enter your own repository, optional service URLs, and optional tokens. Token prompts are hidden. This writes an ignored `.env` without contacting any service or overwriting an existing file. Alternatively copy `.env.example` to `.env` and edit locally. Restart the app after edits.
+Run `.\.venv\Scripts\python.exe -m techops.settings` to enter your own repository, optional service URLs, and optional tokens. Token prompts are hidden. This writes an ignored `.env` without contacting any service. Use `setup.ps1 -Configure -Service <name>` to edit an existing file privately. Alternatively copy `.env.example` to `.env` and edit locally. Restart the app after edits.
 
 Settings: GITHUB_REPOSITORY (owner/name), GITHUB_TOKEN, GRAFANA_URL, GRAFANA_TOKEN, LOKI_URL, LOKI_TOKEN, SERVICENOW_URL, SERVICENOW_TOKEN, SERVICENOW_USERNAME, SERVICENOW_PASSWORD. GRAFANA_ADMIN_PASSWORD is used only by the optional local Grafana lab. Process environment values override `.env`, including an explicitly empty value. Values are literal: no interpolation, command execution, export syntax, or multiline values. URLs must use HTTPS except loopback HTTP; never put credentials in URLs. A fresh clone starts with all integrations disabled. The retained config/integrations.json is an empty reference, not runtime configuration. Tokens are never returned by the status API.
 
@@ -46,7 +46,7 @@ Run from the repository root:
 .\.venv\Scripts\python.exe -m techops.connectors grafana --read
 .\.venv\Scripts\python.exe -m techops.connectors loki --label checkout --read
 ```
-The first command previews the plan. Install explicitly downloads version-pinned official Grafana OSS 13.2.2 and Loki 3.7.8 Windows binaries and checks published SHA256 values before extraction. Everything downloaded/generated is inside ignored data/observability. Startup creates loopback-only configuration, provisions the Local Loki data source, and preserves existing settings. It refuses to replace different service URLs. It does not stop an existing listener; verify that listener yourself. First-run Grafana database migrations can take several minutes.
+The first command previews the plan. Install explicitly downloads version-pinned official Grafana OSS 13.2.2 and Loki 3.7.8 Windows binaries and checks published SHA256 values before extraction. Everything downloaded/generated is inside ignored data/observability. Startup creates loopback-only configuration, provisions the Local Loki data source, and preserves existing settings. It refuses to replace different service URLs. It does not stop an existing listener. Occupied ports must identify as the expected service; startup waits for healthy responses. Existing processes retain their original configuration until restarted. First-run Grafana database migrations can take several minutes.
 
 Grafana: http://127.0.0.1:3000. Loki readiness: http://127.0.0.1:3100/ready. Anonymous Grafana access is Viewer-only for this synthetic localhost lab. Admin username is techops; the generated password stays in GRAFANA_ADMIN_PASSWORD in ignored .env. Do not paste it into issues, chat, screenshots, or shell commands. Local users with filesystem access can read it. Do not expose these services to LAN/public interfaces. Usage reporting and update checks are disabled.
 
@@ -59,7 +59,7 @@ Use a developer/test instance, not production. Edit these names in ignored .env 
 - SERVICENOW_URL: HTTPS instance origin, without path or embedded credentials.
 - Either SERVICENOW_TOKEN for an existing OAuth bearer access token, or SERVICENOW_USERNAME plus SERVICENOW_PASSWORD for an account permitted to read incidents. Do not configure both methods.
 
-The initial setup command prompts with hidden token/password entry. If .env already exists, edit it locally; setup will not overwrite it. Never send credentials in chat. The connector does not request/refresh OAuth tokens or change instance ACLs. Use an account restricted to the records needed for testing.
+The initial setup command prompts with hidden token/password entry. For an existing .env, use `setup.ps1 -Configure -Service servicenow`; Enter keeps a value and - clears it. Never send credentials in chat. The connector does not request/refresh OAuth tokens or change instance ACLs. Use an account restricted to the records needed for testing.
 
 ```powershell
 .\.venv\Scripts\python.exe -m techops.connectors servicenow

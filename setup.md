@@ -1,91 +1,102 @@
 # TechOpsagent setup
 Author: Armando Gomez
 
-## Requirements
-Windows 11, PowerShell, Python 3.10 or newer, and a modern browser. Python 3.13 is the verified local interpreter. Internet access is needed only when installing dependencies. No model or cloud account is required.
+## First run
+Use Windows 11, PowerShell, Git, and Python 3.12+ (3.13 is verified). Open PowerShell in the cloned repository. No model or cloud account is needed.
 
-## Installation checklist
-- [ ] Open PowerShell in the repository root.
 ```powershell
-Set-Location D:\TechOpsagent
-python --version
+.\setup.ps1 -Install -Check -Test -EnableHook
+.\setup.ps1 -Run
 ```
-- [ ] Create the isolated environment if it does not already exist.
+
+The first command creates/reuses .venv, installs pinned dependencies, checks settings, runs tests, and enables the privacy hook. It stops on failure. Only installation needs internet; no models or observability binaries are downloaded by Install. Existing settings and data are preserved. To select Python, add `-Python "C:\path\to\python.exe"`.
+
+Run starts the app in this terminal at http://127.0.0.1:8765. Keep it open; Ctrl+C stops the app. Setup refuses occupied ports and never stops existing processes. Select another port explicitly with `-Run -Port 8768` if appropriate.
+
+In a second terminal:
 ```powershell
-if (-not (Test-Path .venv\Scripts\python.exe)) { python -m venv .venv }
+.\setup.ps1 -Check -Live
 ```
-- [ ] Install the pinned dependencies and check them.
+
+Live checks contact only fixed localhost endpoints, reject redirects, and verify service-specific responses. The app's startup source fingerprint detects older code still running. Exit 1 means a prerequisite or checked service needs attention. Optional unconfigured integrations do not fail setup. External service URLs are never probed here.
+
+With no flags, setup.ps1 displays help and changes nothing. No activation or permanent execution-policy change is needed. If local policy restricts scripts, use the Python alternatives below in accordance with that policy.
+
+## Private configuration
 ```powershell
+.\setup.ps1 -Configure -Service github
+.\setup.ps1 -Configure -Service servicenow
+```
+
+Choices: all, github, grafana, loki, servicenow. Prompts show set/empty, never existing values. Tokens/passwords use hidden input. Enter keeps a value; a single "-" clears it. Other services are preserved. Invalid input, cancellation, or a detected concurrent edit leaves the original unchanged. Saving normalizes comments/formatting.
+
+Only ignored .env stores settings. Process environment overrides this file, including empty overrides. Restart the app after every settings change: the source fingerprint does not detect configuration changes. Never put credentials in arguments, screenshots, issues, or chat.
+
+For ServiceNow, provide an HTTPS origin and either OAuth bearer token or username/password. Clear the old method when switching. A URL alone is incomplete. Use synthetic records in a developer instance; remote writes are not implemented. See [integration details](docs/INTEGRATIONS.md#servicenow).
+
+## Optional local Grafana and Loki
+```powershell
+.\setup.ps1 -InstallLab -StartLab -SeedLab
+```
+
+InstallLab explicitly downloads version-pinned official Windows builds and verifies checksums. StartLab checks binaries and occupied ports, launches hidden local services, and waits for healthy responses. First-run Grafana migrations can take minutes. Each service has a bounded wait; a timeout leaves the process available for inspection. Logs are in ignored data/observability.
+
+SeedLab sends three generated events only to local Loki. It never forwards machine logs. On later runs:
+```powershell
+.\setup.ps1 -StartLab -SeedLab
+```
+
+Open [the synthetic dashboard](http://127.0.0.1:3000/d/techops-local-lab). Anonymous access is Viewer-only on localhost. The generated admin password stays in .env. Restart TechOpsagent after configuring the endpoints, then analyze checkout logs. Re-seed when events age beyond the 15-minute window.
+
+Different configured service URLs and unrecognized listeners are preserved; setup stops for conflict resolution. It never resets existing credentials or terminates services. See [the lab guide](docs/INTEGRATIONS.md#native-windows-observability-lab).
+
+## Everyday commands
+| Action | Command |
+|---|---|
+| Offline check | `.\setup.ps1 -Check` |
+| Check running services | `.\setup.ps1 -Check -Live -Port 8765` |
+| Run tests | `.\setup.ps1 -Test` |
+| Start app | `.\setup.ps1 -Run -Port 8765` |
+| Configure one service | `.\setup.ps1 -Configure -Service github` |
+| Enable privacy hook | `.\setup.ps1 -EnableHook` |
+
+Order: install environment, configure, install/start/seed lab, check, test, enable hook, run. Do not combine Run and Live; use a second terminal for Live after startup. A custom Git hooksPath is preserved; merge hooks manually if needed.
+
+## Direct Python alternatives
+Run from the repository root with the explicit project interpreter:
+```powershell
+python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -m techops.settings --edit --service github
+.\.venv\Scripts\python.exe -m techops.diagnostics
+.\.venv\Scripts\python.exe -m techops.diagnostics --live --port 8765 --json
+.\.venv\Scripts\python.exe -m unittest discover -s tests
+.\.venv\Scripts\python.exe -m techops.server --port 8765
 ```
-Expected check: `No broken requirements found.` Explicit interpreter paths avoid PowerShell activation-policy problems.
 
-## Verification checklist
-- [ ] Run every automated test; stop and fix failures before proceeding.
-```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
-```
-The latest verified count is recorded in STATE.md and docs/VALIDATION.md. The run must end in `OK`.
-- [ ] Start the server in this terminal.
-```powershell
-.\.venv\Scripts\python.exe -m techops.server
-```
-- [ ] In a second terminal, check health and the generated API schema.
-```powershell
-Invoke-RestMethod http://127.0.0.1:8765/api/health
-Invoke-RestMethod http://127.0.0.1:8765/openapi.json | Select-Object openapi
-```
-Health must report `status: ok` and `framework: fastapi`.
-- [ ] Open http://127.0.0.1:8765, select an incident, and click Investigate incident.
-- [ ] Confirm evidence appears, history adds a record, and Download report returns Markdown.
-- [ ] Refresh and reopen the saved record from history.
-- [ ] Verify the 390 px mobile layout with Chrome device emulation and capture a full screenshot plus a focused investigation-panel snippet. See docs/PROGRESS.md.
+Diagnostics uses the standard library and can report missing packages before app dependencies are installed. JSON contains statuses/package names, not secret values or private service URLs. The native lab launcher requires Windows.
 
-## Export sample reports
-```powershell
-.\.venv\Scripts\python.exe -m techops.demo
-```
-Expected: `Exported 3 synthetic incident reports to examples/`.
+## Verification
+- [ ] Offline check reports READY and tests end with OK.
+- [ ] Fresh app passes Live; configured local lab services are healthy.
+- [ ] Investigate a synthetic incident, export its report, and reopen history.
+- [ ] Seed fresh Loki events and analyze checkout if using the lab.
+- [ ] Preview a ServiceNow draft: dry_run true, remote_write false.
+- [ ] Before publication, check staged content, history, and screenshots.
 
-## Stop and restart
-Press Ctrl+C in the server terminal. Restart after Python changes before live validation. If an older preview was started in the background, identify its exact command before stopping it:
 ```powershell
-Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Select-Object ProcessId, CommandLine
+.\.venv\Scripts\python.exe -m tools.publish_guard --staged
+.\.venv\Scripts\python.exe -m tools.publish_guard --history
 ```
-Only stop the verified TechOpsagent process: `Stop-Process -Id <verified-process-id>`. Never stop unrelated Python processes.
+
+Actual counts are in [STATE.md](STATE.md) and [validation](docs/VALIDATION.md). Development tasks are in [the checklist](Tech%20Ops%20Agent.md).
 
 ## Troubleshooting
-- Port busy: identify the existing preview, or start with `--port 8766` and use that port in all browser and health URLs.
-- FastAPI import fails: use `.\.venv\Scripts\python.exe`, then reinstall requirements if needed.
-- HTTP 403: use localhost or 127.0.0.1 with the actual port. The app deliberately rejects other Host values and cross-origin writes.
-- API documentation: `/openapi.json` is available offline. Hosted Swagger assets are not required or enabled.
-- Unexpected test failure: record the failing output in STATE.md, fix it, then rerun the complete suite before checking a task off.
+- Stale/occupied preview: Ctrl+C in its terminal, or verify the exact background process identity before stopping it. Never stop all Python processes.
+- Missing lab binaries: InstallLab. Initialization pending: inspect ignored logs, allow migrations to finish, and check again.
+- Invalid settings: use private Configure prompts. Never paste .env into a diagnostic report.
+- Missing/mismatched packages: rerun Install. Setup does not delete an existing incompatible .venv.
+- Direct phone access remains separate work; use the existing authenticated remote session. Never expose these unauthenticated localhost services publicly.
 
-## Data and access
-Local incidents are stored in data/incidents.sqlite3 and excluded from Git. Use synthetic tickets only. Stop the server before backing up the database. The service is loopback-only: a responsive phone layout does not make the server accessible from a phone browser. Use the existing authenticated remote session. Direct remote access is a separate checklist task.
-
-## Task execution
-Follow [Tech Ops Agent.md](Tech%20Ops%20Agent.md) in order. Setup checkboxes above are a reusable operator checklist; completed development tasks and acceptance criteria live in that task document. Current handoff status lives only in STATE.md.
-
-## Verify observed evidence and offline AI
-Use Live local lab in the dashboard to collect a real controlled failure. Switch to Imported JSONL logs and paste the examples from docs/LOGS.md. Both modes must save a result and produce an evidence-citing report.
-
-```powershell
-.\.venv\Scripts\python.exe -m techops.ai --dry-run --scenario api_error
-```
-Expected JSON: dry_run true, inference_enabled false, and evidence IDs E1–E3. This command does not contact a model service. Live model testing is a separate explicit approval.
-
-## Approved local-model evaluation
-The recorded local run used the already installed llama3.2:3b model. See [MODEL-EVALUATION.md](docs/MODEL-EVALUATION.md) for results and reproduction commands. The dashboard still uses rule-based analysis; the model does not start with the web app.
-
-## Read-only integrations
-See [integration setup](docs/INTEGRATIONS.md) for GitHub Issues, Grafana health, Loki log intake, configuration, and offline previews.
-
-## Your local settings
-Run `.\.venv\Scripts\python.exe -m techops.settings` to enter your integration settings locally. Tokens use hidden prompts. The ignored `.env` is never published; `.env.example` contains only blank fields. The app works as an offline lab without any tokens. Restart after configuration changes.
-
-Before publishing, enable the local guard once with `git config core.hooksPath .githooks`. Run `.\.venv\Scripts\python.exe -m tools.publish_guard --staged` after staging and `.\.venv\Scripts\python.exe -m tools.publish_guard --history`. Review staged screenshots and data manually as well. See [security guidance](SECURITY.md).
-
-## Wire Grafana, Loki, and ServiceNow
-Follow [the integration lab guide](docs/INTEGRATIONS.md#native-windows-observability-lab). It includes checksum-verified Windows installation, local startup, synthetic log ingestion, and ServiceNow developer-instance settings. Credentials remain in .env. Restart the app after configuration changes.
+Offline AI preview remains available via `.\.venv\Scripts\python.exe -m techops.ai --dry-run --scenario api_error`. Setup never downloads or starts models. See [model evaluation](docs/MODEL-EVALUATION.md).

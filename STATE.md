@@ -65,10 +65,18 @@ Loki /ready 200, synthetic push 204, live read three observations. Grafana healt
 
 Full suite: `Ran 104 tests in 2.731s`, `OK`. Pip check clean; JS syntax and doc links passed. ServiceNow supports OAuth bearer or HTTPS basic authentication, fixed incident fields, bounded pages, and draft preview. CLI and dashboard controls added. Automatic approval review blocked new app-preview launch (8768), reason blocked by policy; no workaround launch attempted. Existing app previews may serve stale Python and need manual restart before new UI validation. Grafana running process 31180 and Loki 13596 are historical identities only; verify before shutdown.
 
+## 2026-09-24 - setup improvements working
+Improving the existing setup path: one PowerShell entry point, private per-service configuration editing, offline/loopback diagnostics, readiness checks, and stale-preview detection. No automatic model downloads, remote writes, or process termination.
+
+## 2026-09-24 - setup improvements verified
+One Windows entry point now supports install, private per-service configuration editing, offline/live diagnostics, tests, native lab install/start/seed, privacy-hook enablement, and foreground app startup. Existing settings are preserved; hidden entry and atomic snapshot-checked updates prevent accidental overwrite. Diagnostics disclose only statuses, never private URLs or secrets. App health exposes a startup public-source fingerprint; it detects stale source but configuration changes still require restart.
+
+Verification: `Ran 120 tests in 7.952s`, `OK`; pip check clean, doc links and diff check passed. Actual clean Windows bootstrap in an isolated path containing spaces exited 0 and reported READY with no .env and no accounts configured. Existing Grafana/Loki were reused and verified HEALTHY. Existing app on 8766 correctly reported stale; occupied-port run refused to launch or kill anything. No new persistent preview/model was started.
+
 ## Restart Point
-1. Read Git status and reproduce 104 tests using `.\.venv\Scripts\python.exe -m unittest discover -s tests`.
+1. Read Git status and reproduce 120 tests using `.\.venv\Scripts\python.exe -m unittest discover -s tests`.
 2. Local Grafana http://127.0.0.1:3000/d/techops-local-lab and Loki http://127.0.0.1:3100/ready were verified. Check live health before reuse. Run tools.seed_loki --send-local for fresh synthetic events. See docs/INTEGRATIONS.md for install/start commands and hidden local credentials.
 3. ServiceNow adapter/draft implementation is done; live validation is blocked on the developer-instance URL and credentials entered only in local .env. Do not paste secrets into chat or tracked docs. T11 authenticated direct phone access remains outstanding.
-4. Start/restart updated TechOpsagent manually for full UI verification; automatic approval review blocked launching port 8768. Older 8765/8766/8767 previews may have stale Python code. Tests use fresh disposable servers; live handler and Grafana browser evidence are recorded separately.
+4. Preferred setup: setup.ps1 -Check, -Configure -Service name, -StartLab, -Test, and foreground -Run. Use -Check -Live to identify stale previews. Older 8765/8766/8767 processes may serve old code; verify identity before manual shutdown. A fresh server test verifies build_id. No new persistent preview was launched during setup improvement.
 5. User granted full permissions/no routine prompts; no-model-download restriction persists. No model downloads or remote incident writes occurred.
 6. Run tools.publish_guard --staged and --history before every push. Keep .env, downloaded binaries, generated runtime configs, databases and logs excluded. Track only synthetic examples/screenshots and blank .env.example.

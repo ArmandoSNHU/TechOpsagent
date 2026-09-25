@@ -7,12 +7,15 @@ from pathlib import Path
 import secrets
 import socket
 import subprocess
+import time
 import tarfile
 import urllib.request
 import zipfile
-from techops.settings import load_settings,write_settings
+from techops.settings import load_settings,save_settings
+from techops.diagnostics import probe_service
 
 ROOT=Path(__file__).resolve().parents[1]
+WINDOWS=os.name=='nt'
 GRAFANA_VERSION='13.2.2'
 LOKI_VERSION='3.7.8'
 
@@ -41,13 +44,14 @@ def prepare(root=ROOT):
     folder=root/'data/observability';folder.mkdir(parents=True,exist_ok=True)
     for name in ('grafana-data','grafana-logs','plugins','loki-data'):
         (folder/name).mkdir(parents=True,exist_ok=True)
-    values=load_settings(root/'.env',{})
+    env_path=root/'.env'
+    expected=env_path.read_bytes() if env_path.exists() else None
+    values=load_settings(env_path,{})
     for key,value in [('GRAFANA_URL','http://127.0.0.1:3000'),('LOKI_URL','http://127.0.0.1:3100')]:
         if values[key] and values[key]!=value:raise ValueError('Existing service configuration differs; preserve it and configure the local lab separately')
         values[key]=value
     if not values['GRAFANA_ADMIN_PASSWORD']:values['GRAFANA_ADMIN_PASSWORD']=secrets.token_urlsafe(32)
-    temporary=root/('.env.'+secrets.token_hex(8))
-    write_settings(temporary,values);os.replace(temporary,root/'.env')
+    save_settings(env_path,values,expected)
     data=(folder/'loki-data').as_posix()
     (folder/'loki.yaml').write_text(f'''auth_enabled: false
 server:
@@ -131,28 +135,55 @@ news_feed_enabled = false
 ''',encoding='utf-8')
     return values
 
-def start(root=ROOT):
-    if os.name!='nt':raise RuntimeError('This launcher requires Windows')
-    values=prepare(root);folder=root/'data/observability'
+def wait_ready(name,port,seconds=300,process=None):
+    deadline=time.monotonic()+seconds
+    while True:
+        if process is not None and process.poll() is not None:return False
+        result=probe_service(name,port)
+        if result['status']=='healthy':return True
+        if result['status']=='unexpected_response' or time.monotonic()>=deadline:return False
+        time.sleep(min(2,max(0,deadline-time.monotonic())))
+
+def start(root=ROOT,wait_seconds=300):
+    if not WINDOWS:raise RuntimeError('This launcher requires Windows')
+    folder=root/'data/observability'
     home=folder/'grafana'/('grafana-'+GRAFANA_VERSION)
     commands=[('loki',3100,[str(folder/'loki/loki-windows-amd64.exe'),'-config.file='+str(folder/'loki.yaml')]),
               ('grafana',3000,[str(home/'bin/grafana.exe'),'server','--homepath',str(home),'--config',str(folder/'grafana.ini')])]
+    processes={}
+    for name,port,command in commands:
+        if not Path(command[0]).is_file():raise RuntimeError('Local lab binaries missing; run setup.ps1 -InstallLab first')
+        with socket.socket() as probe:
+            probe.settimeout(1)
+            if probe.connect_ex(('127.0.0.1',port))==0 and probe_service(name,port)['status'] not in {'healthy','starting'}:
+                raise RuntimeError(f'Port {port} does not identify as {name}; no existing process was changed')
+    values=prepare(root)
     for name,port,command in commands:
         with socket.socket() as probe:
             probe.settimeout(1)
             if probe.connect_ex(('127.0.0.1',port))==0:
-                print(f'{name}: port {port} already listening; left untouched. Verify its health.');continue
+                print(f'{name}: existing service detected on loopback port {port}; checking readiness.',flush=True);continue
         environment=dict(os.environ)
         if name=='grafana':environment['GF_SECURITY_ADMIN_PASSWORD']=values['GRAFANA_ADMIN_PASSWORD']
         with (folder/(name+'.log')).open('ab') as output,(folder/(name+'-error.log')).open('ab') as error:
             process=subprocess.Popen(command,cwd=root,env=environment,stdout=output,stderr=error,creationflags=subprocess.CREATE_NO_WINDOW)
-        print(f'{name}: started PID {process.pid} on loopback port {port}; verify readiness before use.')
+            processes[name]=process
+        print(f'{name}: started PID {process.pid} on loopback port {port}; waiting for readiness.',flush=True)
+    for name,port,_ in commands:
+        if not wait_ready(name,port,wait_seconds,processes.get(name)):
+            raise RuntimeError(f'{name} is not ready within the wait limit. Check data/observability/{name}.log; first-run migrations may still be running')
+        print(f'{name}: HEALTHY at http://127.0.0.1:{port}',flush=True)
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--install',action='store_true');parser.add_argument('--start',action='store_true');args=parser.parse_args()
-    if args.install:install()
-    if args.start:start()
+    try:
+        if args.install:install()
+        if args.start:start()
+    except RuntimeError as exc:
+        raise SystemExit(str(exc)) from None
+    except (OSError,ValueError):
+        raise SystemExit('Local lab setup did not complete. Check binaries, configured URLs, port ownership and ignored runtime logs. No secret values displayed.') from None
     if not (args.install or args.start):print('Dry run: local Grafana 3000 and Loki 3100. Use --install for downloads; --start for local runtime/configuration.')
 
 if __name__=='__main__':main()

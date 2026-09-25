@@ -5,18 +5,16 @@ A local incident-investigation workspace that turns controlled local failures an
 
 ![Desktop investigation workspace](docs/screenshots/fastapi-desktop.jpg)
 
-## Run in under a minute
-Requires Python 3.10 or newer and a modern browser. Install the pinned FastAPI/Uvicorn dependencies once. No account, API key, or model is required for the demo.
+## Start on Windows
+Requires Python 3.12+ and PowerShell. From the cloned repository:
 
 ```powershell
-cd D:\TechOpsagent
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m techops.server
+.\setup.ps1 -Install -Check -Test -EnableHook
+.\setup.ps1 -Run
 ```
-Open **http://127.0.0.1:8765**. Select an incident, optionally add synthetic ticket context, and click **Investigate incident**. Review the suspected cause and evidence; download the Markdown report. Stop a foreground server with Ctrl+C.
+Open **http://127.0.0.1:8765**. Select a synthetic incident, inspect its evidence, and download the draft report. Ctrl+C stops the foreground app. No account, API key, or model is needed for this workflow.
 
-If the port is occupied: `.\.venv\Scripts\python.exe -m techops.server --port 8766` and open that port instead.
+Use `.\setup.ps1 -Check -Live` in a second terminal to detect unhealthy services and stale previews. Configure private accounts with `-Configure -Service github` or `servicenow`. The full [setup guide](setup.md) covers optional Grafana/Loki installation, startup checks, local credentials, and port conflicts.
 
 ## What works today
 - FastAPI/Uvicorn backend with strict request models and generated OpenAPI.
@@ -27,7 +25,7 @@ If the port is occupied: `.\.venv\Scripts\python.exe -m techops.server --port 87
 - Responsive dashboard and actual desktop/mobile screenshots.
 - Offline AI prompt preview plus a disabled-by-default local-model adapter.
 
-Local lab failures are intentionally generated. Imported logs are unverified user data. Rule scores are not probabilities; results remain suspected until independently verified. The installed llama3.2:3b model was evaluated locally with approval and no downloads. Six outputs passed format/citation checks, but the review flagged unsupported speculation; explanations remain drafts requiring review. Enterprise integrations and authenticated direct phone access remain unchecked roadmap tasks.
+Local lab failures are intentionally generated. Imported logs are unverified user data. Rule scores are not probabilities; results remain suspected until independently verified. The installed llama3.2:3b model was evaluated locally with approval and no downloads. Six outputs passed format/citation checks, but the review flagged unsupported speculation; explanations remain drafts requiring review. GitHub intake and the local Grafana/Loki lab are verified. The ServiceNow adapter and draft preview are implemented; its live instance connection and authenticated direct phone access remain pending.
 
 ## Repeatable verification
 ```powershell

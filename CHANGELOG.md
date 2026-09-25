@@ -19,3 +19,9 @@ Author: Armando Gomez
 - Added constrained output schemas and clarified raw JSON/evidence instructions after real model validation failures.
 - Added opt-in six-case evaluation runner and measured results.
 - Verification reached 60 tests OK; model outputs remain subject to review.
+
+## Setup improvements
+- Added setup.ps1 for explicit installation, private service configuration, readiness checks and foreground startup.
+- Added secret-free diagnostics and source fingerprint checks for stale previews.
+- Added atomic configuration edits preserving unrelated values and lab readiness checks.
+- Verified 120 tests and a clean isolated Windows bootstrap.
