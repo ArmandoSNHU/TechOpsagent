@@ -71,3 +71,5 @@ Follow-up tools remain planned: HTTPS target probes, certificates, packet import
 - [x] T16: Light/Neon Night theme selector, persistent theme-only preference, readable result states, mobile layout, blocked-storage fallback, screenshots and documentation. Verified 140 Python tests and 4 theme tests.
 
 - [x] T17: DNS hostname lookup with validated stdin input, bounded A/AAAA/alias readings, truthful errors, fixed public examples, target-preserving reports/history, button guide and screenshots. Verified 152 Python tests, 4 theme tests, five local browser checks and demo history regression. Publication status: see STATE.md.
+
+- [x] T18: Research-backed capability review, four guided symptom workflows, session-scoped evidence, freshness/error distinctions, impact notes and Markdown handoff. Research: docs/TECHOPS-RESEARCH.md. Validation and deployment: STATE.md and docs/VALIDATION.md.

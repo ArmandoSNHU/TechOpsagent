@@ -28,7 +28,7 @@ class ApiTests(unittest.TestCase):
         status, _, body = self.request('GET', '/api/tools/catalog')
         self.assertEqual(status, 200)
         self.assertEqual(len(json.loads(body)['categories']), 5)
-        for route in ['/toolkit.js', '/toolkit.css', '/incidents']:
+        for route in ['/toolkit.js', '/investigation.js', '/toolkit.css', '/incidents']:
             self.assertEqual(self.request('GET', route)[0], 200)
         self.assertIn('data-mode="local"', self.request('GET', '/')[2].decode())
 

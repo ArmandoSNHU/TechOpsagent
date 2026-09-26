@@ -25,7 +25,7 @@ See the [illustrated button guide](TOOL-GUIDE.md). Every public reading is synth
 | `.github/workflows/pages.yml` | Test, privacy scan, build, upload, deploy |
 | `tests/test_pages.py` | Isolation, consistency, repeatability, stale-output refusal |
 
-The builder publishes 13 files: the toolkit HTML/CSS/JS, catalog.json, demo.json, the incident HTML/CSS/JS, scenarios.json, three Markdown reports, and .nojekyll. Every source is explicitly allowlisted. Only this generated directory is uploaded. It never loads operator `.env`, SQLite records, runtime logs, integration settings, or model output. It refuses existing output directories instead of merging unknown files into an artifact.
+The builder publishes 14 files: the toolkit HTML/CSS/JS plus investigation.js, catalog.json, demo.json, the incident HTML/CSS/JS, scenarios.json, three Markdown reports, and .nojekyll. Every source is explicitly allowlisted. Only this generated directory is uploaded. It never loads operator `.env`, SQLite records, runtime logs, integration settings, or model output. It refuses existing output directories instead of merging unknown files into an artifact.
 
 The toolkit fetches same-origin catalog and demo JSON; the incident workspace fetches its own scenario JSON. It does not contact FastAPI, Grafana, Loki, ServiceNow, or an AI provider. The demo code has no uploads, account forms, telemetry, or cookies. Browser localStorage holds only the Light/Neon Night theme preference; diagnostic results remain in tab memory. GitHub Pages itself handles ordinary hosting requests. Generated text uses `textContent`; ticket HTML is not interpreted. The content-security policy restricts scripts, styles, and connections to the site origin.
 

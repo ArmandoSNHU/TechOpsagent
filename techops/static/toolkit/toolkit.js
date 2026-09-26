@@ -18,6 +18,8 @@
   const local = document.body.dataset.mode === 'local';
   let catalog, fixtures, currentCategory, currentTool, currentResult, busy = false, activeView = 'overview';
   const history = [];
+  let investigation = null;
+  const investigations = globalThis.TechOpsInvestigation;
   const label = {observed:'Observed', issue:'Review needed', not_checked:'Not checked', unavailable:'Unavailable'};
   const incidentUrl = local ? './incidents' : './incidents.html';
 
@@ -35,7 +37,7 @@
   }
   function show(view, title) {
     activeView = view;
-    for (const id of ['overview','category-view','tool-view']) $(id).hidden = id !== view;
+    for (const id of ['overview','category-view','tool-view','investigation-view']) $(id).hidden = id !== view;
     $('breadcrumb').textContent = title;
     document.querySelectorAll('.nav-item').forEach(node => node.classList.toggle('active', node.dataset.category === currentCategory && view !== 'overview'));
     $('home').classList.toggle('active', view === 'overview');
@@ -49,6 +51,41 @@
     window.scrollTo({top:0, behavior:'instant'});
   }
   function home() { show('overview', 'Overview'); }
+  function startInvestigation(key) {
+    if (busy) { $('global-status').textContent = 'Wait for the running check before starting a new investigation.'; return; }
+    investigation = {key, evidence:[]};
+    $('guide-impact').value = ''; $('guide-change').value = '';
+    $('resume-guide').hidden = false;
+    showInvestigation();
+  }
+  function assessment() { return investigations.assess(investigation.key, investigation.evidence, local ? 'local' : 'demo'); }
+  function recordInvestigation(result) {
+    if (investigation && investigations.books[investigation.key].steps.some(([key])=>key===result.tool)) {
+      investigation.evidence = investigation.evidence.filter(entry=>entry.tool!==result.tool);
+      investigation.evidence.push(result);
+      if (activeView === 'investigation-view') showInvestigation();
+    }
+  }
+  function showInvestigation() {
+    if (!investigation) return;
+    const brief = assessment();
+    $('investigation-title').textContent = brief.title;
+    $('guide-counts').textContent = `${brief.usable}/${brief.steps.length} usable snapshots · ${brief.review} need review`;
+    $('guide-conclusion').textContent = brief.conclusion;
+    $('guide-gaps').replaceChildren(...brief.gaps.map(text => element('li',text)));
+    const states = {...label, missing:'Not collected', stale:'Old or invalid timestamp — rerun'};
+    $('guide-steps').replaceChildren(...brief.steps.map((step,index) => {
+      const card = element('article',undefined,'investigation-step');
+      card.append(element('span',`E${index+1} · ${states[step.state]}`,'tool-state'),element('h3',catalog.tools[step.tool].title),element('p',step.why));
+      if(step.result) {
+        card.append(element('p',step.result.summary,'muted'),element('p',`${step.result.collected_at}${step.result.hostname ? ' · Queried: '+step.result.hostname : ''}`,'result-target'));
+        if(step.result.truncated) card.append(element('p','Partial snapshot: readings were truncated.','muted'));
+      }
+      card.append(button(step.result ? 'Open and rerun →' : 'Open check →','secondary',()=>openTool(step.tool)));
+      return card;
+    }));
+    show('investigation-view','Guided investigation');
+  }
   function category(id) {
     currentCategory = id;
     const item = catalog.categories.find(c => c.id === id);
@@ -76,6 +113,7 @@
   }
   function openTool(id) {
     currentTool = id;
+    $('return-guide').hidden = !investigation;
     const tool = catalog.tools[id];
     if (!currentCategory || !catalog.categories.find(c => c.id === currentCategory).tools.includes(id)) currentCategory = catalog.categories.find(c => c.tools.includes(id)).id;
     $('tool-category').textContent = catalog.categories.find(c => c.id === currentCategory).title.toUpperCase();
@@ -161,6 +199,7 @@
       } else result = structuredClone(fixtures[tool === 'dns' ? example : tool]);
       if (!result || result.tool !== tool || !Array.isArray(result.readings)) throw new Error('Unexpected result. No readings can be displayed.');
       history.push(result);
+      recordInvestigation(result);
       if (history.length > 50) history.shift();
       $('session-count').replaceChildren(document.createTextNode(String(history.length).padStart(2,'0')+' '), element('small','checks retained'));
       refreshHistory();
@@ -168,6 +207,7 @@
       else $('global-status').textContent = `${catalog.tools[tool].title} finished. Open Reports & history to review it.`;
     } catch (error) {
       const message = error.name === 'TimeoutError' ? 'The request timed out. No result was recorded; retry after the current check finishes.' : error.message;
+      recordInvestigation({tool,mode:local?'local':'demo',status:'unavailable',collected_at:new Date().toISOString(),hostname:request.hostname,readings:[],summary:'The latest request failed; no diagnostic readings were returned. Retry the check before relying on previous observations.'});
       if (currentTool === tool && activeView === 'tool-view') $('run-status').textContent = message;
       else $('global-status').textContent = message;
     } finally {
@@ -177,6 +217,17 @@
     }
   }
   $('home').addEventListener('click', home);
+  $('guide-home').addEventListener('click', home);
+  $('resume-guide').addEventListener('click', showInvestigation);
+  $('return-guide').addEventListener('click', showInvestigation);
+  $('refresh-brief').addEventListener('click', showInvestigation);
+  $('save-handoff').addEventListener('click', () => {
+    if (!investigation) return;
+    const text = investigations.report(assessment(), {impact:$('guide-impact').value,change:$('guide-change').value});
+    const url = URL.createObjectURL(new Blob([text], {type:'text/markdown;charset=utf-8'}));
+    const link = element('a'); link.href=url; link.download=`techops-${local ? 'local' : 'demo'}-handoff.md`;
+    document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
   $('category-back').addEventListener('click', home);
   $('tool-back').addEventListener('click', () => category(currentCategory));
   $('run-tool').addEventListener('click', run);
@@ -217,7 +268,7 @@
         card.append(element('span', item.icon, 'category-icon'), element('h3', item.title), element('p', item.description), element('span','Explore tools ↗','card-link'));
         $('category-cards').append(card);
       });
-      catalog.shortcuts.forEach(item => $('shortcuts').append(button(item.title + ' →', 'shortcut', () => { currentCategory = 'troubleshoot'; openTool(item.tool); })));
+      catalog.shortcuts.forEach(item => $('shortcuts').append(button(item.title + ' →', 'shortcut', () => startInvestigation(item.tool))));
       if (local) {
         $('rail-mode').textContent = 'LOCAL WORKSPACE';
         $('rail-description').textContent = 'Read-only Windows checks. Results stay in this tab unless you save a report.';

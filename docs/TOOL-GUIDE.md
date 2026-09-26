@@ -27,7 +27,7 @@ The browser saves only `techops-theme` (`light` or `neon`) in localStorage. Diag
 | All categories / Overview | Home dashboard | Return to the category menu |
 | Back to category | The tool directory you came from | Choose another tool in that category |
 
-The symptom buttons are starting points, not completed diagnoses. Internet is not working opens network configuration; Computer is slow opens resource readings; Application will not open opens selected services; Connection keeps dropping opens a TCP snapshot. Further evidence may be needed beyond this release's tools.
+The four Overview symptom buttons start guided investigations. Each provides an ordered sequence of existing checks, context notes, an evidence brief and support handoff. They do not establish a diagnosis. Selecting a symptom starts a fresh brief; Resume investigation preserves the current one.
 
 ## Run, understand, and save
 1. Choose **Network → Check my network → Open tool**.
@@ -92,3 +92,18 @@ An observed address proves only that resolution returned an address. It does not
 ![DNS result snippet](screenshots/dns-snippet.png)
 
 ![DNS failure example on mobile](screenshots/dns-mobile.jpg)
+
+## Guided investigations and support handoff
+1. From **Overview → What’s wrong?**, select internet problems, a slow computer, application trouble or dropped connections. This starts a fresh investigation and clears the previous brief and notes. Existing individual-tool history remains available.
+2. Record **Who or what is affected?** and **When did it start? What changed?** These optional notes stay only in tab memory, limited to 1,000 characters each. Never enter passwords or tokens.
+3. Read the reason for each check, choose **Open check**, then **Run local check** or **Run demo check**. Choose **Return to investigation** afterward. No checks run automatically.
+4. Review the **Operations brief**. Usable means a current observed or review-needed result exists, not that the service is healthy. Missing, empty, unavailable and stale readings do not count as usable. Local samples older than ten minutes, invalid timestamps and future timestamps require a rerun. **Refresh evidence age** recalculates age without collecting anything.
+5. Run the remaining checks and follow **Still to verify**. The latest attempt for each relevant tool replaces its earlier evidence, including a failed request. Only results collected after starting this investigation are included. For DNS, confirm that the recorded hostname is the affected service; the tool cannot infer that from your notes.
+6. Choose **Save support handoff** to download Markdown with your notes, evidence E1/E2/E3, timestamps, DNS target, limitations and escalation/recovery steps. Raw reading tables are excluded; individual tool JSON exports remain available. This does not create a ticket or send a message. Notes and summaries are not automatically redacted.
+7. **Overview → Resume investigation** returns to the same brief. Refreshing the browser clears notes and evidence; export first if needed.
+
+Root cause, priority and recovery are never inferred from snapshot count. Confirm impact with the affected user, assign an owner and next update, and verify the original user task after an approved fix. Wider service monitoring and incident lifecycle work are listed in the [research and roadmap](TECHOPS-RESEARCH.md).
+
+![Guided investigation desktop](screenshots/operations-desktop.jpg)
+
+![Operations brief mobile detail](screenshots/operations-mobile.jpg)

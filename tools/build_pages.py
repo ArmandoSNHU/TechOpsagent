@@ -19,7 +19,7 @@ def build(output):
         if source.is_symlink():
             raise ValueError('Site sources must be regular files')
         shutil.copyfile(source, output / ('incidents.html' if name == 'index.html' else name))
-    for name in ('index.html', 'toolkit.css', 'toolkit.js'):
+    for name in ('index.html', 'toolkit.css', 'toolkit.js', 'investigation.js'):
         source = ROOT / 'techops' / 'static' / 'toolkit' / name
         if source.is_symlink():
             raise ValueError('Toolkit sources must be regular files')

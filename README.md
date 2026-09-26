@@ -89,3 +89,6 @@ See [integration setup](docs/INTEGRATIONS.md) for GitHub Issues, Grafana health,
 Run `.\.venv\Scripts\python.exe -m techops.settings` to enter your integration settings locally. Tokens use hidden prompts. The ignored `.env` is never published; `.env.example` contains only blank fields. The app works as an offline lab without any tokens. Restart after configuration changes.
 
 Before publishing, enable the local guard once with `git config core.hooksPath .githooks`. Run `.\.venv\Scripts\python.exe -m tools.publish_guard --staged` after staging and `.\.venv\Scripts\python.exe -m tools.publish_guard --history`. Review staged screenshots and data manually as well. See [security guidance](SECURITY.md).
+
+## Guided operations workflow
+Choose a symptom on Overview to collect relevant checks, record impact and recent changes, review missing or stale evidence, and download a Markdown support handoff. Available in the local app and synthetic public demo, with Light and Neon Night themes. No automatic remediation or ticket submission occurs. See the [button guide](docs/TOOL-GUIDE.md#guided-investigations-and-support-handoff) and [research-backed capability roadmap](docs/TECHOPS-RESEARCH.md).

@@ -24,7 +24,7 @@ class PagesTests(unittest.TestCase):
             output = Path(directory) / 'public'
             build(output)
             self.assertEqual({p.name for p in output.iterdir()},
-                             {'index.html', 'incidents.html', 'toolkit.css', 'toolkit.js', 'catalog.json', 'demo.json', 'style.css', 'app.js', 'scenarios.json', '.nojekyll', 'reports'})
+                             {'index.html', 'incidents.html', 'toolkit.css', 'toolkit.js', 'investigation.js', 'catalog.json', 'demo.json', 'style.css', 'app.js', 'scenarios.json', '.nojekyll', 'reports'})
             self.assertEqual(len(list((output / 'reports').glob('*.md'))), 3)
 
     def test_fixture_reports_are_consistent_and_synthetic(self):

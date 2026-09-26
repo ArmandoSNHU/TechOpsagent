@@ -80,3 +80,10 @@ Actual Chrome captures of the generated synthetic Pages artifact served locally:
 ![DNS result snippet](screenshots/dns-snippet.png)
 
 ![DNS mobile failure](screenshots/dns-mobile.jpg)
+
+## Guided investigations — 2026-09-26
+Real Chrome screenshots of the locally served synthetic public artifact. The mobile detail shows the operations brief and handoff controls. Both themes and 390px layout were checked; no private machine readings are captured.
+
+![Guided investigation](screenshots/operations-desktop.jpg)
+
+![Mobile brief detail](screenshots/operations-mobile.jpg)

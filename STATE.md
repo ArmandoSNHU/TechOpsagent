@@ -86,7 +86,12 @@ Latest suite: `Ran 140 tests in 8.297s`, `OK`. Five saved browser regression che
 ## 2026-09-25 — T17 published
 Commit 563acf0 deployed successfully: Pages run 36132722248 and privacy/test run 36132722190. Live public desktop and 390px mobile DNS success/failure/history checks passed; console had no warnings/errors. Final local suite after documentation edits: `Ran 152 tests in 8.397s`, `OK`; 4 theme tests passed. Staged/history publication guards reported zero findings; screenshots use synthetic fixtures only.
 
+## 2026-09-26 — T18 implemented and verified locally
+Primary-source research and capability roadmap: docs/TECHOPS-RESEARCH.md. Four guided workflows, session-only context and scoped latest evidence, freshness/error distinctions, and escaped Markdown handoff are implemented. Full suite: `Ran 152 tests in 8.394s`, `OK`; 13 Node tests passed. Seven browser checks passed in demo and mocked-local modes; five existing toolkit regression checks passed. All four workflows open on mobile; both themes have no horizontal overflow. Chrome screenshots contain only synthetic content. Public publication pending. No new collector, model or remediation.
+
 ## Restart Point
+Current: T18 guided operations implemented; verify publication status in the latest dated entry. Reproduce 152 Python tests and 13 Node tests (`node --test tests/*.test.cjs`). Fresh local preview on 8772; synthetic artifact preview on 8776. Check process identity before reuse. Next: configured-target HTTPS/TLS diagnostics, then incident ownership and recovery tracking.
+
 2026-09-25: T17 DNS resolution published and verified. 152 Python tests OK (8.374s), 4 theme tests passed, five local browser checks and demo history regression passed. Real DNS success/failure and synthetic desktop/mobile screenshots verified. See docs/DNS-PLAN.md, docs/TOOL-GUIDE.md and docs/VALIDATION.md. No model download or startup. Next planned tool: website/server check.
 
 2026-09-25 — T16 implemented and locally verified. Shared toolkit now has a Light/Neon Night selector, theme-only localStorage, and safe fallback when storage is blocked. 140 Python tests OK (`Ran 140 tests in 8.255s`); 4 theme tests passed. Desktop/mobile Chrome checks, preference restoration, contrast samples, and synthetic screenshots verified. Public deployment 36101611164 and privacy/test run 36101611276 succeeded for 339a225. Live theme selection, saved preference after reload, 390px mobile layout and clean console verified. Run `node --test tests/theme.test.cjs` alongside the Python suite for future verification.

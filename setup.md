@@ -105,3 +105,6 @@ Offline AI preview remains available via `.\.venv\Scripts\python.exe -m techops.
 
 ## Diagnostic toolkit
 The home dashboard now opens category-based tools. See [the illustrated button guide](docs/TOOL-GUIDE.md). Five read-only collectors support Windows; other platforms report Unavailable. No additional dependency or model is needed. Incident workflows remain at `/incidents`. Results stay in tab memory until explicitly downloaded; exports may include local network details.
+
+## Guided investigation verification
+No new Python dependency or model is required. Start the app, choose an Overview symptom, open/run a check, return to the investigation and save a handoff. The public demo follows the same flow with synthetic readings. Node verification for all frontend rules: `node --test tests/*.test.cjs`. Python verification remains `.\.venv\Scripts\python.exe -m unittest discover -s tests`. Notes and handoffs may contain private information; keep real exports outside tracked folders.

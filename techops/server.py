@@ -117,6 +117,9 @@ def create_app(database=None, settings=None):
     @app.get('/toolkit.js', include_in_schema=False)
     def toolkit_js(): return FileResponse(ROOT/'static'/'toolkit'/'toolkit.js', media_type='text/javascript')
 
+    @app.get('/investigation.js', include_in_schema=False)
+    def investigation_js(): return FileResponse(ROOT/'static'/'toolkit'/'investigation.js', media_type='text/javascript')
+
     @app.get('/toolkit.css', include_in_schema=False)
     def toolkit_css(): return FileResponse(ROOT/'static'/'toolkit'/'toolkit.css', media_type='text/css')
 

@@ -26,3 +26,6 @@ Shared toolkit HTML/CSS/JS live under `techops/static/toolkit/`. Server-rendered
 
 ## DNS toolkit extension
 `techops/dns.py` validates a hostname and passes JSON through stdin to a fixed Windows DNS-only script. The existing toolkit API lock and loopback/Origin boundary apply. Unlike configuration snapshots, this explicit Run action may contact the configured DNS resolver. Output is schema-checked, bounded to 64 records and labeled without inferring application health. The shared UI records the target with each result; Pages uses only fixed synthetic success/failure fixtures. No new runtime dependency, model or API route is required.
+
+## Guided operations layer
+`investigation.js` contains pure runbooks, evidence assessment and Markdown rendering, tested with Node. The toolkit owns one current investigation and a latest-result map represented as a bounded array of its two or three relevant tools. Starting a new symptom clears that scope; existing tool history is independent. Context is never sent to the backend. A failed transport attempt replaces earlier evidence with unavailable. Only same-mode readings qualify, with a ten-minute local freshness heuristic. No background collection, model, persisted incident lifecycle or automatic action is added. The public builder now allowlists 14 files including this shared script.
