@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TechOps contribution evidence — Armando Gomez</title><style>body{margin:0;background:#0a1420;color:#e6f3ed;font:15px/1.6 system-ui,sans-serif}main{max-width:1240px;margin:auto;padding:40px}header{border-bottom:1px solid #36505b;margin-bottom:28px}h1{font-size:42px;line-height:1.12;max-width:900px}header p{color:#abc6cd}small{color:#74e8c2;letter-spacing:1px}section{display:grid;grid-template-columns:1fr 1fr;gap:20px}article{background:#132432;border:1px solid #36505b;border-radius:8px;padding:24px;min-width:0}h2{font-size:21px;overflow-wrap:anywhere}h3{font-size:16px;color:#b6d4db}strong{color:#ccff70;font-size:21px}pre{background:#09131e;padding:16px;border-radius:5px;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}code{font-size:11px;overflow-wrap:anywhere}footer{margin-top:28px;color:#abc6cd;font-size:12px}@media(max-width:700px){main{padding:22px}section{grid-template-columns:1fr}h1{font-size:32px}}</style><main><header><small>TECHOPS / CONTRIBUTION EVIDENCE</small><h1>Four repositories. Reproduced defects. Verified fixes.</h1><p>Armando Gomez · 26 September 2026<br>Rendered evidence from executed tests and synthetic examples. This is a contribution report, not a production monitoring dashboard.</p></header><section><article><small>VERIFIED LOCAL CONTRIBUTION</small><h2>ops-runbook-automation-kit</h2><h3>Truthful runbook exits</h3><p>Failed checks now exit 1; invalid input exits 2.</p><strong>13 tests passed</strong><pre>[
+  {
+    &quot;step&quot;: &quot;README exists&quot;,
+    &quot;passed&quot;: true
+  },
+  {
+    &quot;step&quot;: &quot;README describes kit&quot;,
+    &quot;passed&quot;: true
+  }
+]</pre><code>python -m unittest discover</code></article><article><small>VERIFIED LOCAL CONTRIBUTION</small><h2>ai-helpdesk-triage-engine</h2><h3>Accurate keyword boundaries</h3><p>Download no longer becomes a P1 outage; security indicators retain their route.</p><strong>7 tests passed</strong><pre>[
+  {
+    &quot;ticket_id&quot;: &quot;SYNTHETIC-DOWNLOAD&quot;,
+    &quot;category&quot;: &quot;general&quot;,
+    &quot;priority&quot;: &quot;P4&quot;
+  },
+  {
+    &quot;ticket_id&quot;: &quot;SYNTHETIC-SECURITY&quot;,
+    &quot;category&quot;: &quot;security&quot;,
+    &quot;priority&quot;: &quot;P1&quot;
+  },
+  {
+    &quot;ticket_id&quot;: &quot;SYNTHETIC-OUTAGE&quot;,
+    &quot;category&quot;: &quot;network&quot;,
+    &quot;priority&quot;: &quot;P1&quot;
+  }
+]</pre><code>python -m unittest discover</code></article><article><small>VERIFIED LOCAL CONTRIBUTION</small><h2>cloud-cost-guardrails</h2><h3>Strict inventory contracts</h3><p>String false and invalid numeric fields are rejected instead of producing misleading findings.</p><strong>11 tests passed</strong><pre>{
+  &quot;finding_count&quot;: 6,
+  &quot;invalid_string_false&quot;: &quot;Rejected with exit 2 (covered by tests)&quot;
+}</pre><code>python -m unittest discover</code></article><article><small>VERIFIED LOCAL CONTRIBUTION</small><h2>FDE_Dashboard</h2><h3>Close SQLite connections reliably</h3><p>Success, query failures and setup failures all release their connections.</p><strong>180 tests passed</strong><pre>{
+  &quot;demo&quot;: &quot;Demo complete&quot;,
+  &quot;viewer_tools&quot;: 4,
+  &quot;oncall_tools&quot;: 6,
+  &quot;lifecycle_regressions&quot;: 7
+}</pre><code>uv run pytest -q (projects/01-mcp-server)</code></article></section><footer>Changes are on review branches. Pull-request checks and merge status are recorded separately in the contribution guide. No cloud resources changed, models started, or real tickets used.</footer></main></html>

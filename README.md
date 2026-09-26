@@ -92,3 +92,6 @@ Before publishing, enable the local guard once with `git config core.hooksPath .
 
 ## Guided operations workflow
 Choose a symptom on Overview to collect relevant checks, record impact and recent changes, review missing or stale evidence, and download a Markdown support handoff. Available in the local app and synthetic public demo, with Light and Neon Night themes. No automatic remediation or ticket submission occurs. See the [button guide](docs/TOOL-GUIDE.md#guided-investigations-and-support-handoff) and [research-backed capability roadmap](docs/TECHOPS-RESEARCH.md).
+
+## Repository contribution case studies
+Four focused reliability fixes, regression tests, pull requests and screenshots: [contribution portfolio and learning guide](docs/CONTRIBUTIONS.md). These demonstrate the evidence-first workflow on runbooks, helpdesk triage, cloud inventory and an MCP integration.
