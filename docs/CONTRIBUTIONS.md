@@ -7,8 +7,8 @@ Four public repositories owned by ArmandoSNHU were selected for their operationa
 
 | Repository / pull request | Reproduced problem and fix | Verified local suite |
 |---|---|---|
-| [ops-runbook-automation-kit #1](https://github.com/ArmandoSNHU/ops-runbook-automation-kit/pull/1) | Failed checks exited 0. Now success is 0, failed checks 1, invalid/incomplete execution 2; malformed and empty runbooks are rejected. | 13 tests OK |
-| [ai-helpdesk-triage-engine #1](https://github.com/ArmandoSNHU/ai-helpdesk-triage-engine/pull/1) | `download` matched `down` and became P1; endpoint keywords could overwhelm ransomware routing. Shared keyword boundaries and explicit security precedence fix these cases. | 7 tests OK |
+| [ops-runbook-automation-kit #1](https://github.com/ArmandoSNHU/ops-runbook-automation-kit/pull/1) | Correct exit codes and strict validation; bounded file reads confined to a trusted root; network denied unless hosts are explicitly granted. | 26 tests OK |
+| [ai-helpdesk-triage-engine #1](https://github.com/ArmandoSNHU/ai-helpdesk-triage-engine/pull/1) | Keyword boundaries and security precedence fix routing; outputs omit raw ticket identities/text and input is bounded. | 15 tests OK |
 | [cloud-cost-guardrails #1](https://github.com/ArmandoSNHU/cloud-cost-guardrails/pull/1) | String `false` became public exposure; invalid cost/port/age values passed coercion. Strict shared validation now rejects ambiguous input. | 11 tests OK |
 | [FDE_Dashboard #1](https://github.com/ArmandoSNHU/FDE_Dashboard/pull/1) | SQLite transaction contexts did not close connections. Handles now close after success, query failure and setup failure. | 180 server tests + 34 evaluation tests passed |
 
@@ -22,8 +22,15 @@ Each defect was reproduced before its fix. Local tests use synthetic inputs, tem
 
 These projects could inform future TechOpsagent integrations. This round used the evidence-first workflow to improve their code; TechOpsagent itself does not yet clone repositories, fix code or submit PRs automatically.
 
+## Security follow-up — 2026-09-27
+All four PRs now include the security follow-up. Actions are pinned, checkout credentials are not retained, and CI permissions are read-only except narrowly scoped deployment permissions. GitHub main protection, secret scanning/push protection, vulnerability alerts and automatic security fixes are active. Dependency workflow schedules begin after the PRs merge; no PR is merged automatically.
+
+Reachable-history review covered 226 file versions across 22 commits before this security follow-up. Six flags were individually reviewed as synthetic fixtures or nonsensitive template defaults; no confirmed credentials were found. The new changes separately passed publication checks. Both FDE lockfile audits returned `No known vulnerabilities found`; the other three projects declare no third-party runtime dependencies. These results do not certify the projects as vulnerability-free.
+
+TechOpsagent's own export/loopback protections are in [TechOpsagent #1](https://github.com/ArmandoSNHU/TechOpsagent/pull/1). See [security hardening](SECURITY-HARDENING.md) for reproduction commands and remaining boundaries.
+
 ## Evidence snapshots
-The first image is a real Chrome capture of an evidence report rendered from executed test results and synthetic CLI examples. It is not a live infrastructure dashboard. The JSON record includes commands, timestamps and outputs. The second image is the actual FDE dashboard served from the contribution branch, with test figures regenerated from the corrected code.
+These snapshots record the initial reliability round on 2026-09-26; the table above includes the later security tests. The first image is a real Chrome capture of an evidence report rendered from executed test results and synthetic CLI examples. It is not a live infrastructure dashboard. The JSON record includes commands, timestamps and outputs. The second image is the actual FDE dashboard served from the contribution branch, with test figures regenerated from the corrected code.
 
 ![Four verified contributions](contributions/evidence.jpg)
 
