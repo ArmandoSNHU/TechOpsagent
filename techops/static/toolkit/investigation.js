@@ -29,17 +29,27 @@
   }
   const safe=value=>String(value ?? 'Not recorded').slice(0,4000).replace(/[\x00-\x08\x0b-\x1f]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/[\\`*_[\]#|]/g,'\\$&');
   function report(a, context={}, now=Date.now()) {
-    const lines=['# Technical operations handoff','Author: Armando Gomez',`Generated: ${new Date(now).toISOString()}`,`Mode: ${a.mode==='demo'?'SYNTHETIC DEMO — not device readings':'LOCAL — private details may be included'}`,'',`## Symptom: ${safe(a.title)}`,
-      `Impact / affected users: ${safe(context.impact || 'Not recorded')}`,`Started / recent changes: ${safe(context.change || 'Not recorded')}`,'Priority: Not assigned; confirm business impact and urgency.','Recovery: Not verified.','Root cause: Not established.','','## Evidence'];
+    const lines=['# Technical operations handoff','Author: Armando Gomez',`Generated: ${new Date(now).toISOString()}`,`Mode: ${a.mode==='demo'?'SYNTHETIC DEMO — not device readings':'LOCAL - sanitized summary'}`,'',`## Symptom: ${safe(a.title)}`,
+      'Impact / affected users: omitted from shared export','Started / recent changes: omitted from shared export','Priority: Not assigned; confirm business impact and urgency.','Recovery: Not verified.','Root cause: Not established.','','## Evidence'];
     a.steps.forEach((s,i)=>{
       lines.push(`### E${i+1}: ${s.tool} — ${s.state}`,s.why);
-      if(s.result){lines.push(`Collected: ${safe(s.result.collected_at)}`);if(s.result.hostname)lines.push(`Queried hostname: ${safe(s.result.hostname)}`);lines.push(safe(s.result.summary));if(s.result.truncated)lines.push('Partial snapshot: readings were truncated.');}
+      if(s.result){lines.push('Private result details omitted. Reading count: '+(Array.isArray(s.result.readings)?s.result.readings.length:0));if(s.result.truncated)lines.push('Partial snapshot: readings were truncated.');}
       else lines.push('No matching result collected for this investigation.');
     });
-    lines.push('','## Evidence gaps and next steps',...a.gaps.map(g=>'- '+g),'','## Handoff and recovery verification','- Assign an owner and agree the next update time.','- Escalate ongoing widespread outages or suspected data/security impact through your organization\'s incident process.','- Record any approved change, then repeat the original user task and relevant checks.','- Keep suspected causes separate from confirmed evidence; record follow-up prevention work.',a.conclusion,'','Privacy: review before sharing. Notes and diagnostic summaries are not automatically redacted. Raw reading tables are excluded; export individual checks when needed.');
+    lines.push('','## Evidence gaps and next steps',...a.gaps.map(g=>'- '+g),'','## Handoff and recovery verification','- Assign an owner and agree the next update time.','- Escalate ongoing widespread outages or suspected data/security impact through your organization\'s incident process.','- Record any approved change, then repeat the original user task and relevant checks.','- Keep suspected causes separate from confirmed evidence; record follow-up prevention work.',a.conclusion,'','Privacy: notes, identifiers, timestamps, hostnames, diagnostic summaries and raw reading tables are omitted. Full details remain visible locally. Review the remaining summary before sharing.');
     return lines.join('\n')+'\n';
   }
-  const api={books,assess,report};
+  function exportDiagnostic(result) {
+    const pick=(value,allowed)=>allowed.includes(value)?value:'unknown';
+    return {author:'Armando Gomez', export_policy:'sanitized-summary-v1',
+      tool:pick(result.tool,['network','connections','health','services','dns']),
+      mode:pick(result.mode,['local','demo']),
+      status:pick(result.status,['observed','issue','not_checked','unavailable']),
+      reading_count:Array.isArray(result.readings)?result.readings.length:0,
+      truncated:result.truncated===true,
+      privacy:'Raw readings, IPs, hostnames, process metadata, timestamps and free-text notes are omitted. Full details remain visible locally.'};
+  }
+  const api={books,assess,report,exportDiagnostic};
   if(typeof module!=='undefined' && module.exports) module.exports=api;
   else root.TechOpsInvestigation=api;
 })(globalThis);

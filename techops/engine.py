@@ -71,3 +71,19 @@ def render_report(r):
               '', '## Ticket context (untrusted, redacted)']
     lines += ['> ' + line for line in (r['ticket'] or 'No additional ticket context.').splitlines()]
     return '\n'.join(lines) + '\n'
+
+
+def render_shared_report(record):
+    """Sharing summary excludes every free-text field rather than guessing secrets."""
+    severity = record.get('severity')
+    severity = severity if severity in ('P1', 'P2', 'P3', 'P4') else 'Not disclosed'
+    evidence = record.get('evidence')
+    count = len(evidence) if isinstance(evidence, list) else 0
+    return '\n'.join([
+        '# Incident report  -  sanitized summary', '', 'Author: Armando Gomez',
+        'Severity: ' + severity, 'Status: suspected  -  not verified',
+        'Evidence records: ' + str(count), '', '## Privacy',
+        'Identifiers, timestamps, service names, ticket text, logs, evidence details, hypotheses and notes are omitted.',
+        'This export is a structural summary. Full evidence remains in the local workspace.',
+        '', '## Next steps', 'Review the evidence locally and verify recovery before closing the incident.',
+        'Root cause and recovery are not established by this summary.', ''])

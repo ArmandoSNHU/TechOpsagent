@@ -141,3 +141,21 @@ Nine new Node tests exercise missing evidence, newest failed result, mode isolat
 Fresh local server restarted before browser validation. tests/browser_investigation.js returned seven passed checks for the public synthetic preview and seven for local mode with mocked collectors; no new real host inspection occurred. These cover scoped evidence, context retention, DNS identity, handoff content/escaping, failed transport replacing old success (local), and clearing a new investigation. Existing tests/browser_toolkit.js returned five passed checks. All four workflow titles and step counts verified on mobile. Both themes had no horizontal overflow at 390px; desktop 1440px verified. Browser console reported no errors/warnings. Captured screenshots are actual Chrome views of only synthetic examples.
 
 T18 live publication: commit 4d900dc, Pages run 36253615592 and privacy/test run 36253615491 succeeded. Public desktop and 390px mobile each passed the seven-check investigation browser regression, with no console warnings/errors. Staged/history scans found zero flagged items; screenshots were manually reviewed as synthetic.
+
+
+## 2026-09-27 - Sanitized export and loopback boundary verification
+Author: Armando Gomez
+
+Observed privacy/peer tests failing before implementation; then full suite `Ran 157 tests in 8.464s`, `OK`, and Node `tests 16`, `pass 16`, `fail 0`. Regression coverage includes remote peer spoofing a local Host, missing/nonloopback endpoint information, unknown export metadata, arbitrary private free text, and the real incident download route retaining no private ticket context while local records remain intact.
+
+Fresh source previews were launched on loopback for verification, using a new synthetic-only database with empty integration settings and a new dedicated Pages artifact. No live collector or DNS query was run. Chrome verification passed:
+- Seven guided workflow checks in the built static demo, with zero tool requests and no horizontal overflow.
+- Seven guided workflow checks in local mode with mocked collectors, including unavailable-result handling and sanitized handoff download.
+- Five DNS browser checks with mocked collection, including the absence of the queried hostname in JSON export and preservation of the correct hostname in local history.
+- Captured tool JSON download contained only tool/mode/status/count/truncation plus static attribution/privacy text; no raw readings or target field.
+- Real local incident report HTTP download excluded synthetic private context while the local incident response preserved it.
+- Local Chrome console contained no warnings or errors.
+
+The rebuilt public artifact contained exactly **14 files**, from the existing explicit allowlist. No screenshots, runtime database, operator settings or new export files enter that artifact. The screenshot below was captured from Chrome's synthetic demo with documentation-range IPs only; it is documentation, not a Pages artifact.
+
+![Synthetic result and sanitized export notice](screenshots/security-export-demo.jpg)

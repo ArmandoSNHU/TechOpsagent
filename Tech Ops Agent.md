@@ -75,3 +75,5 @@ Follow-up tools remain planned: HTTPS target probes, certificates, packet import
 - [x] T18: Research-backed capability review, four guided symptom workflows, session-scoped evidence, freshness/error distinctions, impact notes and Markdown handoff. Research: docs/TECHOPS-RESEARCH.md. Validation and deployment: STATE.md and docs/VALIDATION.md.
 
 - [x] T19: Four repository reliability contributions with reproduced defects, regression tests, source fixes, author-attributed documentation, synthetic evidence snapshots and separate PRs. See docs/CONTRIBUTIONS.md; PRs remain unmerged for review.
+
+- [x] T20 local implementation: privacy-summary exports, real loopback enforcement, runbook boundaries, triage identity minimization, protected branches and dependency-security automation. Local verification:157Python/16Node; contribution26/15/11/180+34. Publication and review status: STATE.md. See docs/SECURITY-HARDENING.md.

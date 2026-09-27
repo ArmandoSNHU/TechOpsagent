@@ -33,10 +33,10 @@ test('complete snapshots never assert root cause or recovery',()=>{
  const a=assess('health',[sample('health'),sample('services')],'local',now);
  assert.equal(a.usable,2);assert.match(a.conclusion,/not establish.*root cause.*recovery/i);
 });
-test('handoff preserves evidence, mode and limitations and escapes untrusted notes',()=>{
+test('handoff preserves structural evidence and mode while omitting private notes',()=>{
  const a=assess('network',[sample('dns','issue',{hostname:'missing.example.invalid',readings:[]})],'local',now);
  const out=report(a,{impact:'<img src=x> [click](https://example.com)',change:'unknown'},now);
- assert.match(out,/missing.example.invalid/);assert.match(out,/LOCAL/);assert.match(out,/Not verified/);
+ assert.ok(!out.includes('missing.example.invalid'));assert.match(out,/LOCAL/);assert.match(out,/Not verified/);
  assert.ok(!out.includes('<img'));assert.ok(!out.includes('[click]('));assert.match(out,/Armando Gomez/);
 });
 test('demo timestamps are explicitly synthetic and do not expire',()=>{

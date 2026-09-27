@@ -22,10 +22,10 @@ async () => {
     assert($('result-target').textContent.includes('example.com')&&!$('result-target').textContent.includes('changed'),'Wrong target in result');
     $('explain').click();assert(!$('explanation').hidden,'Explanation missing');
     URL.createObjectURL=blob=>{saved=blob;return 'blob:dns-test';};HTMLAnchorElement.prototype.click=()=>{};
-    $('export').click();assert(JSON.parse(await saved.text()).hostname==='example.com','Export target changed');
+    $('export').click();assert(JSON.parse(await saved.text()).hostname===undefined,'Export disclosed queried hostname');
     document.querySelector('[data-category="reports"]').click();
     const entry=[...document.querySelectorAll('.history-item')].find(n=>n.textContent.includes('example.com'));
     assert(entry,'DNS target absent from history');entry.click();assert($('hostname').value==='example.com','History did not restore target');
-    return {passed:5,checks:['invalid URL blocked','normalized hostname sent','in-flight edit cannot relabel result','export retains queried hostname','history reopens queried hostname']};
+    return {passed:5,checks:['invalid URL blocked','normalized hostname sent','in-flight edit cannot relabel result','export omits queried hostname','history reopens queried hostname']};
   } finally {window.fetch=original;URL.createObjectURL=originalURL;HTMLAnchorElement.prototype.click=originalClick;}
 }

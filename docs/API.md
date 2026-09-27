@@ -18,13 +18,13 @@ Base URL: `http://127.0.0.1:8765`. JSON uses UTF-8. Bind address is loopback onl
 | GET /api/incidents | 200: latest 100 complete records, newest first |
 | GET /api/incidents/{id} | 200: record; 404 if absent |
 | GET /api/incidents/{id}/ai-preview | 200: offline model prompt preview; 404 if absent |
-| GET /api/incidents/{id}/report | 200: downloadable Markdown; 404 if absent |
+| GET /api/incidents/{id}/report | 200: sanitized structural Markdown summary; 404 if absent |
 | POST /api/investigate | 201: newly persisted fixture investigation |
 | POST /api/lab/investigate | 201: observed loopback fault investigation |
 | POST /api/analyze | 201: structured JSONL analysis |
 
 ## Run a diagnostic tool
-Send JSON `{"tool":"network"}` to `POST /api/tools/run`. The only accepted IDs are `network`, `connections`, `health`, `services`, and `dns`; extra fields and other IDs return 400. Fixed read-only Windows commands run without a shell or profile, with a 12-second deadline and no elevation. Results include `tool`, `mode: local`, UTC `collected_at`, `status`, `summary`, `readings`, and `truncated`. Status is `observed`, `issue`, `not_checked`, or `unavailable`. Unsupported systems and collection failures are unavailable, never healthy. Raw command errors are not returned. At most 200 sanitized rows are exposed; oversized output is rejected. Results are not saved to SQLite. Local Host/Origin restrictions and no-store headers apply. Only one collection runs at a time.
+Send JSON `{"tool":"network"}` to `POST /api/tools/run`. The only accepted IDs are `network`, `connections`, `health`, `services`, and `dns`; extra fields and other IDs return 400. Fixed read-only Windows commands run without a shell or profile, with a 12-second deadline and no elevation. Results include `tool`, `mode: local`, UTC `collected_at`, `status`, `summary`, `readings`, and `truncated`. Status is `observed`, `issue`, `not_checked`, or `unavailable`. Unsupported systems and collection failures are unavailable, never healthy. Raw command errors are not returned. At most 200 field-allowlisted rows are exposed; oversized output is rejected. Results are not saved to SQLite. Loopback peer/local endpoint checks, Host/Origin restrictions and no-store headers apply. Only one collection runs at a time.
 
 `GET /` opens the toolkit. `GET /incidents` preserves the incident workspace. Explicit `/toolkit.js` and `/toolkit.css` routes serve shared assets. The static public build always uses synthetic fixtures; it never calls these collection APIs.
 
@@ -66,3 +66,6 @@ The fixed Windows Resolve-DnsName script receives JSON through stdin; input neve
 DNS adds `hostname` and nullable `elapsed_ms`, and returns at most 64 validated `name`, `type`, `answer`, `ttl_seconds` rows. Types are A, AAAA and returned CNAME aliases. Elapsed query time excludes process startup and is not network round-trip latency. Address records give observed; failed lookup gives issue; no usable address gives not_checked; timeout or malformed collection gives unavailable. A failed lookup alone cannot distinguish a nonexistent name from an unreachable resolver. A successful lookup does not prove application health.
 
 The explicit static asset `GET /investigation.js` serves the shared guided-assessment rules. No new collection API or persistence route is added. Guided context and evidence remain in browser memory; Markdown handoffs are generated locally by the browser.
+
+## Download privacy
+`GET /api/incidents/{id}/report` omits ticket text, evidence details, titles, service names, identifiers and timestamps. It retains a fixed-vocabulary severity and evidence count with generic recovery guidance. Record/list APIs still return full local records; they are not sharing endpoints. Toolkit JSON and guided Markdown download buttons omit raw readings, names and notes. No raw export parameter is supported. The single-user runtime checks actual loopback peer and endpoint addresses as well as Host/Origin. Keep proxy headers disabled and do not put a tunnel/proxy in front of this unauthenticated app.
