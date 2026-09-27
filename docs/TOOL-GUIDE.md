@@ -61,7 +61,7 @@ Connection/configuration tools deliberately avoid Passed because they do not pro
 ## History and privacy
 The latest 50 diagnostic snapshots stay only in the current tab's memory. Refreshing closes that session history. **Saved investigations** opens the separate SQLite-backed incident history in the local app. The public incident demo has no persistent incident history.
 
-Local diagnostic exports can contain queried hostnames, returned addresses, private IP addresses, DNS configuration, adapter/process names, and resource readings. Review them before sharing. They are not automatically redacted, stored in SQLite, committed, or uploaded. Never place real reports in tracked project files or public screenshots. Public documentation screenshots use only synthetic examples and documentation-range IP addresses.
+Diagnostic download buttons create sanitized summaries. Tool JSON retains tool, mode, status, reading count and truncation only; it omits raw readings, queried hostnames, IPs, process/adapter names, timestamps and notes. Full details remain visible locally. No upload occurs. Never place real API responses, reports or private screenshots in tracked files.
 
 ## Planned tools
 Website/server probes, API checks, certificate inspection, packet capture imports, and per-process resource rankings are labeled **Planned**. They have no Run button. Optional local-model chat remains future work; no model is downloaded or started by this release.
@@ -81,11 +81,11 @@ Website/server probes, API checks, certificate inspection, packet capture import
 2. In the local Windows app, enter a hostname such as `example.com`. Use a name, without `https://`, a port, path or IP address. ASCII and punycode names are accepted.
 3. Choose **Run local check**. The requested name is sent through configured Windows DNS; a cached answer may be used. The operation changes no settings, bypasses the hosts file, and has a 12-second deadline.
 4. Read **Query**, status and the record table. **A** is an IPv4 address; **AAAA** is IPv6; **CNAME** is a returned alias; **TTL seconds** is the reported record lifetime. At most 64 records appear. Query time excludes process startup and is not a ping measurement.
-5. Choose **Explain results**, **Save report**, or **Check my network** to examine adapter/DNS configuration. History and exports retain the name actually queried, even if you later edit the input.
+5. Choose **Explain results**, **Save report**, or **Check my network** to examine adapter/DNS configuration. History retains the name actually queried, even if you later edit the input. Shared exports omit that name.
 
 On public Pages, choose **Address records returned** or **Lookup failed**, then **Run demo check**. These are fixed synthetic cases; the page sends no DNS query. Reopening history restores the matching example.
 
-An observed address proves only that resolution returned an address. It does not prove a website, VPN or application works. Lookup failure can reflect spelling, a missing name, resolver reachability or policy; the tool does not establish which cause applies. No usable address is Not checked, while collection errors/timeouts are Unavailable. Local DNS queries may reveal the name to your configured resolver. Reports are not automatically redacted.
+An observed address proves only that resolution returned an address. It does not prove a website, VPN or application works. Lookup failure can reflect spelling, a missing name, resolver reachability or policy; the tool does not establish which cause applies. No usable address is Not checked, while collection errors/timeouts are Unavailable. Local DNS queries may reveal the name to your configured resolver. Downloaded summaries omit query names and raw records; local results still show them.
 
 ![DNS success example in Neon Night](screenshots/dns-desktop.jpg)
 
@@ -99,8 +99,8 @@ An observed address proves only that resolution returned an address. It does not
 3. Read the reason for each check, choose **Open check**, then **Run local check** or **Run demo check**. Choose **Return to investigation** afterward. No checks run automatically.
 4. Review the **Operations brief**. Usable means a current observed or review-needed result exists, not that the service is healthy. Missing, empty, unavailable and stale readings do not count as usable. Local samples older than ten minutes, invalid timestamps and future timestamps require a rerun. **Refresh evidence age** recalculates age without collecting anything.
 5. Run the remaining checks and follow **Still to verify**. The latest attempt for each relevant tool replaces its earlier evidence, including a failed request. Only results collected after starting this investigation are included. For DNS, confirm that the recorded hostname is the affected service; the tool cannot infer that from your notes.
-6. Choose **Save support handoff** to download Markdown with your notes, evidence E1/E2/E3, timestamps, DNS target, limitations and escalation/recovery steps. Raw reading tables are excluded; individual tool JSON exports remain available. This does not create a ticket or send a message. Notes and summaries are not automatically redacted.
-7. **Overview → Resume investigation** returns to the same brief. Refreshing the browser clears notes and evidence; export first if needed.
+6. Choose **Save support handoff** to download sanitized Markdown with evidence E1/E2/E3 states, limitations and escalation/recovery steps. Notes, timestamps, DNS targets, result summaries and raw reading tables are omitted. This does not create a ticket or send a message.
+7. **Overview → Resume investigation** returns to the same brief. Refreshing the browser clears notes and evidence; save the sanitized summary if needed; it does not preserve private notes.
 
 Root cause, priority and recovery are never inferred from snapshot count. Confirm impact with the affected user, assign an owner and next update, and verify the original user task after an approved fix. Wider service monitoring and incident lifecycle work are listed in the [research and roadmap](TECHOPS-RESEARCH.md).
 

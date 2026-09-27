@@ -1,5 +1,6 @@
 """Local-only ASGI request boundaries, independent of route implementation."""
 import asyncio
+import ipaddress
 from starlette.responses import JSONResponse
 
 MAX_BODY = 16384
@@ -18,7 +19,8 @@ class LocalOnlyMiddleware:
             return await self.app(scope, receive, send)
         headers = dict(scope.get('headers', []))
         host = headers.get(b'host', b'').decode('latin-1')
-        port = scope['server'][1]
+        server = scope.get('server')
+        port = server[1] if server else 0
         allowed = {f'127.0.0.1:{port}', f'localhost:{port}'}
         async def secured_send(message):
             if message['type'] == 'http.response.start':
@@ -27,6 +29,13 @@ class LocalOnlyMiddleware:
             await send(message)
         async def reject(code, reason):
             await JSONResponse({'error':reason}, status_code=code)(scope, receive, secured_send)
+        def loopback(endpoint):
+            try:
+                return bool(endpoint) and ipaddress.ip_address(endpoint[0]).is_loopback
+            except (ValueError, TypeError, IndexError):
+                return False
+        if not loopback(scope.get('client')) or not loopback(server):
+            return await reject(403, 'Loopback connection required')
         if host not in allowed:
             return await reject(403, 'Invalid host')
         if scope['method'] in {'POST','PUT','PATCH','DELETE'}:

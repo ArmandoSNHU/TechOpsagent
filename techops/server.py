@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
 import uvicorn
-from techops.engine import SCENARIOS, investigate, render_report
+from techops.engine import SCENARIOS, investigate, render_shared_report
 from techops.security import LocalOnlyMiddleware
 from techops.store import Store
 from techops.evidence import analyze, parse_jsonl
@@ -83,7 +83,7 @@ def create_app(database=None, settings=None):
 
     @app.get('/api/incidents/{id}/report')
     def report(id: str):
-        return Response(render_report(get_incident(id)), media_type='text/markdown',
+        return Response(render_shared_report(get_incident(id)), media_type='text/markdown',
                         headers={'Content-Disposition':'attachment; filename="incident-report.md"'})
 
     @app.post('/api/investigate',status_code=201)

@@ -10,6 +10,16 @@ from techops.store import Store
 from techops.engine import investigate
 
 class ApiTests(unittest.TestCase):
+    def test_download_omits_private_ticket_while_local_record_preserves_it(self):
+        marker = 'privateperson at workstation.internal 10.4.5.6'
+        record = json.loads(self.post({'scenario':'api_error','ticket':marker})[2])
+        self.assertIn(marker, record['ticket'])
+        status, _, body = self.request('GET','/api/incidents/'+record['id']+'/report')
+        self.assertEqual(status,200)
+        self.assertNotIn(marker,body.decode())
+        self.assertNotIn('workstation.internal',body.decode())
+        self.assertIn('sanitized summary',body.decode())
+
     def test_dns_validated_target_is_passed_as_data(self):
         from unittest.mock import patch
         with patch('techops.toolkit_routes.collect_dns', return_value={'tool':'dns','hostname':'example.com','readings':[]}) as run:

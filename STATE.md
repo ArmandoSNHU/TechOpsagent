@@ -93,6 +93,14 @@ Primary-source research and capability roadmap: docs/TECHOPS-RESEARCH.md. Four g
 Four isolated clones under D:\TechOps-contributions, each on contribution/techops-reliability. PR #1 opened in ops-runbook-automation-kit, ai-helpdesk-triage-engine, cloud-cost-guardrails and FDE_Dashboard. Fixes and authored contribution docs are published on review branches; main branches are not merged. Local suites: 13, 7, 11, and 180+34 tests passed respectively. All four PR CI matrices succeeded. FDE deployment was correctly skipped for the PR. See docs/CONTRIBUTIONS.md for links, screenshots and reproduction/learning exercises. No real credentials/data, cloud mutations or model runtime.
 
 ## Restart Point
+2026-09-27: Security hardening is published in TechOpsagent PR #1 on `security/hardening`. The four contribution PRs #1 are updated; all five PRs remain open and unmerged. All required CI checks passed on the implementation commits. All five remote main branches are protected.
+
+1. Reproduce 157 Python tests and 16 Node tests before runtime changes. See docs/SECURITY-HARDENING.md for boundaries and dependency-audit commands.
+2. Review and merge through the protected PR workflow when authorized; no direct main push. Scheduled dependency workflows and new public-demo code become active after merge, not merely after PR publication.
+3. Fresh synthetic previews were verified on ports 8789 and 8790. Check process identity/build before reuse. Do not expose the backend outside localhost; direct authenticated mobile access is still outstanding.
+4. No model download or production remediation occurred. Local settings remain ignored. Run publication guards before any push.
+
+## Historical restart notes (superseded by the Restart Point above)
 Current contribution work: T19 four PRs prepared; follow live PR checks and review before merging. TechOps runtime behavior is unchanged by the documentation portfolio.
 Current: T18 guided operations published and verified; see the latest dated entry. Reproduce 152 Python tests and 13 Node tests (`node --test tests/*.test.cjs`). Fresh local preview on 8772; synthetic artifact preview on 8776. Check process identity before reuse. Next: configured-target HTTPS/TLS diagnostics, then incident ownership and recovery tracking.
 
@@ -111,3 +119,16 @@ Final documentation verification: `Ran 124 tests in 8.078s`, `OK`; staged/histor
 6. Run tools.publish_guard --staged and --history before every push. Keep .env, downloaded binaries, generated runtime configs, databases and logs excluded. Track only synthetic examples/screenshots and blank .env.example.
 7. T14 is complete. Public demo: https://armandosnhu.github.io/TechOpsagent/. Build via tools.build_pages to a new output folder; never upload the repository root. Pages auto-deploys main after tests and privacy checks. This demo is separate from T11 authenticated local-app access.
 8. T15 is complete and publicly deployed. Toolkit local preview uses 8772; generated synthetic preview uses 8773. Check current process/build identities before reuse. Diagnostic JSON exports can contain private details and must never be committed. Scope of the first network tool is configuration only, not connectivity testing.
+
+## 2026-09-27 — security hardening working
+Authorized security pass: restrict runbooks, minimize exported sensitive data, audit dependencies, enable repository protections, add recurring security checks. Runtime work remains local-only. Completion requires regression suites and recorded scans; no claim of a full penetration test.
+
+## 2026-09-27 — security hardening verified locally
+Author: Armando Gomez. User authorized the recommended security pass and publication workflow. Default exports now omit raw readings, target/device identities and free text; middleware requires actual loopback peers/endpoints. Regression-first tests preceded implementation. Full verification: `Ran 157 tests in 8.054s`, `OK`; Node `tests 16`, `pass 16`, `fail 0`. Fresh synthetic Chrome checks: demo 7, mocked-local guided 7, DNS 5, explicit JSON export and real HTTP incident-download privacy passed. Pages artifact remains 14 allowlisted files; screenshot docs/screenshots/security-export-demo.jpg.
+
+Read-back verified on all five GitHub repositories: main protection with admin enforcement, required PR/checks, strict base freshness, resolved conversations, no force-push/deletion; secret scanning and push protection; vulnerability alerts and automatic security fixes. Zero additional reviewer approvals permits solo-owner PR merging after checks. Runtime/workflow changes remain on review branches until merged; no deployment claimed. Added pinned Actions/least privilege/no credential persistence and weekly Dependabot. TechOps requirements and both FDE frozen lockfile audits each returned `No known vulnerabilities found` with pip-audit 2.10.1. No credential values/data were sent to advisory queries.
+
+Contribution local verification: runbook 26 tests OK; triage 15 tests OK; cloud 11 tests OK; FDE 180+34 passed, scope-aware evaluation 35/37 (94.6%), 0 unsafe. No C++ rewrite, models, production service exposure or remediation. This was targeted security hardening, not a penetration test.
+
+## 2026-09-27 — security changes published for review
+TechOpsagent PR #1 implementation b6099bb passed privacy/tests run 36335055176 and dependency-audit run 36335055185. Updated contribution heads: runbook 2d510df, triage e87399f, cloud 1d30c96, FDE 6cf679b. All contribution CI matrices passed; FDE dependency audits passed and deployment was correctly skipped. No PR was merged. TechOps pre-push guard: 133 staged file versions and 288 historical file versions, zero findings. Four-repository prior-history review: 226 versions, six reviewed synthetic/default matches, zero confirmed sensitive findings. This documentation follow-up records the verified implementation results; its own required CI must also pass before merge.

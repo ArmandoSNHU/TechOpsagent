@@ -166,7 +166,7 @@
       table.append(header,body);
       $('readings').append(table);
     } else $('readings').append(element('p', 'No readings available. Do not treat this as a passed check.', 'muted'));
-    $('export-note').textContent = local ? 'Saved reports can contain local IP addresses, DNS settings and process names. Review before sharing. Nothing is uploaded.' : 'The exported report contains only synthetic demo data.';
+    $('export-note').textContent = 'Save report exports a sanitized summary: tool, mode, status and reading count. Addresses, names, raw readings and notes are omitted. Nothing is uploaded.';
   }
   async function run() {
     if (busy) return;
@@ -242,7 +242,7 @@
   });
   $('export').addEventListener('click', () => {
     if (!currentResult) return;
-    const report = {author:'Armando Gomez', title:catalog.tools[currentTool].title, ...currentResult, limitations:catalog.tools[currentTool].limit};
+    const report = investigations.exportDiagnostic(currentResult);
     const url = URL.createObjectURL(new Blob([JSON.stringify(report,null,2)+'\n'], {type:'application/json'}));
     const link = element('a');
     link.href = url; link.download = `techops-${currentResult.mode}-${currentTool}.json`;

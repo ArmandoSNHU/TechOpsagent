@@ -104,7 +104,10 @@ Actual counts are in [STATE.md](STATE.md) and [validation](docs/VALIDATION.md). 
 Offline AI preview remains available via `.\.venv\Scripts\python.exe -m techops.ai --dry-run --scenario api_error`. Setup never downloads or starts models. See [model evaluation](docs/MODEL-EVALUATION.md).
 
 ## Diagnostic toolkit
-The home dashboard now opens category-based tools. See [the illustrated button guide](docs/TOOL-GUIDE.md). Five read-only collectors support Windows; other platforms report Unavailable. No additional dependency or model is needed. Incident workflows remain at `/incidents`. Results stay in tab memory until explicitly downloaded; exports may include local network details.
+The home dashboard now opens category-based tools. See [the illustrated button guide](docs/TOOL-GUIDE.md). Five read-only collectors support Windows; other platforms report Unavailable. No additional dependency or model is needed. Incident workflows remain at `/incidents`. Full results stay in tab memory. Downloads contain privacy summaries that omit raw network readings and device identifiers.
 
 ## Guided investigation verification
-No new Python dependency or model is required. Start the app, choose an Overview symptom, open/run a check, return to the investigation and save a handoff. The public demo follows the same flow with synthetic readings. Node verification for all frontend rules: `node --test tests/*.test.cjs`. Python verification remains `.\.venv\Scripts\python.exe -m unittest discover -s tests`. Notes and handoffs may contain private information; keep real exports outside tracked folders.
+No new Python dependency or model is required. Start the app, choose an Overview symptom, open/run a check, return to the investigation and save a handoff. The public demo follows the same flow with synthetic readings. Node verification for all frontend rules: `node --test tests/*.test.cjs`. Python verification remains `.\.venv\Scripts\python.exe -m unittest discover -s tests`. Notes remain local; downloaded handoffs omit them and raw targets/readings. Review shared artifacts and keep operational data outside tracked folders.
+
+## Security checks
+See [security hardening](docs/SECURITY-HARDENING.md) for protected branches, dependency audits, private-data boundaries and reproduction commands. The backend remains single-user and loopback-only; do not expose it to a shared LAN or the internet.

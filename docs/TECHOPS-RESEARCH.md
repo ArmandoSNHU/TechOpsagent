@@ -33,7 +33,7 @@ The four existing symptom shortcuts now start a scoped investigation. Each shows
 
 Local timestamps older than ten minutes, invalid timestamps and future timestamps are marked stale. This ten-minute threshold is an explicit product heuristic, not an industry standard or proof that newer evidence still describes the user's situation. Refresh evidence age or reopen the brief to recalculate; there is no background monitoring. Synthetic examples are labeled and do not expire.
 
-The Markdown handoff includes evidence identifiers, collection times, DNS target where applicable, gaps and escalation/recovery reminders. Raw tables are excluded. Notes and summaries may still contain private details and are not automatically redacted. It neither creates a ServiceNow ticket nor sends a message.
+The Markdown handoff includes workflow evidence identifiers and states, gaps and escalation/recovery reminders. Since security hardening, notes, result summaries, source timestamps, DNS targets and raw tables are omitted from downloads. Full context remains visible locally. It neither creates a ServiceNow ticket nor sends a message.
 
 ## Prioritized roadmap
 1. Configured-target HTTPS/TLS diagnostics with strict target controls, bounded reads and no credential forwarding. This tests a service more directly than DNS alone.
